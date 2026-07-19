@@ -1,0 +1,41 @@
+{
+    "name": "Prawko — nauka teorii na prawo jazdy",
+    "short_name": "Prawko",
+    "description": "Nauka do egzaminu teoretycznego na prawo jazdy z silnikiem powtórek i szansą zdania.",
+    "lang": "pl",
+    "dir": "ltr",
+    "start_url": "/dashboard",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait",
+    "theme_color": "#1f4bdc",
+    "background_color": "#ffffff",
+    "categories": ["education"],
+    "icons": [
+        {
+            "src": "/icons/icon-192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/icons/icon-maskable-512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Baza pytań",
+            "short_name": "Pytania",
+            "url": "/pytania"
+        }
+    ]
+}
