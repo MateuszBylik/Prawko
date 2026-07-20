@@ -55,6 +55,17 @@ return [
         'finish' => 'Finish the exam',
         'next' => 'Next question →',
         'no_back' => 'No going back',
+        'total_time_label' => 'Time left in the exam',
+        'points_label' => 'Points',
+        'category_label' => 'Category',
+        'confirm_end' => 'End the exam? We will score the answers you have given so far.',
+        'basic_counter' => 'Basic questions',
+        'specialist_counter' => 'Specialist questions',
+        'read_time_label' => 'Time to read',
+        'answer_time_label' => 'Time to answer',
+        'image_hint' => 'Photo for the question — tap “Show photo”.',
+        'show_image' => 'Show photo',
+        'show_video' => 'Show film',
     ],
 
     'result' => [

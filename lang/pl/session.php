@@ -55,6 +55,17 @@ return [
         'finish' => 'Zakończ egzamin',
         'next' => 'Następne pytanie →',
         'no_back' => 'Bez cofania',
+        'total_time_label' => 'Czas do końca egzaminu',
+        'points_label' => 'Wartość punktowa',
+        'category_label' => 'Kategoria',
+        'confirm_end' => 'Zakończyć egzamin? Wynik policzymy z odpowiedzi udzielonych do tej pory.',
+        'basic_counter' => 'Pytania podstawowe',
+        'specialist_counter' => 'Pytania specjalistyczne',
+        'read_time_label' => 'Czas na zapoznanie się',
+        'answer_time_label' => 'Czas na udzielenie odpowiedzi',
+        'image_hint' => 'Zdjęcie do pytania — kliknij „Pokaż zdjęcie".',
+        'show_image' => 'Pokaż zdjęcie',
+        'show_video' => 'Pokaż film',
     ],
 
     'result' => [

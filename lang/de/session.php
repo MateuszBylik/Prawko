@@ -55,6 +55,17 @@ return [
         'finish' => 'Prüfung beenden',
         'next' => 'Nächste Frage →',
         'no_back' => 'Kein Zurück',
+        'total_time_label' => 'Verbleibende Prüfungszeit',
+        'points_label' => 'Punktwert',
+        'category_label' => 'Klasse',
+        'confirm_end' => 'Prüfung beenden? Wir werten die bisher gegebenen Antworten.',
+        'basic_counter' => 'Grundfragen',
+        'specialist_counter' => 'Spezialfragen',
+        'read_time_label' => 'Zeit zum Lesen',
+        'answer_time_label' => 'Zeit zum Antworten',
+        'image_hint' => 'Foto zur Frage — tippe auf „Foto zeigen“.',
+        'show_image' => 'Foto zeigen',
+        'show_video' => 'Film zeigen',
     ],
 
     'result' => [

@@ -56,8 +56,9 @@ class ExamService
                 'status' => ExamStatus::InProgress,
                 'total_questions' => $questions->count(),
                 'max_score' => (int) $questions->sum('points'),
-                // Egzamin liczy czas per-pytanie (faza czytania/odpowiedzi), nie globalnie.
-                'time_limit_seconds' => null,
+                // Egzamin: globalny limit 25 min (odliczany w nagłówku) OBOK czasu
+                // per-pytanie (faza czytania/odpowiedzi). Nauka i diagnoza — bez limitu.
+                'time_limit_seconds' => $mode === ExamMode::Exam ? (int) config('prawko.exam.time_limit_seconds') : null,
                 'started_at' => now(),
             ]);
 

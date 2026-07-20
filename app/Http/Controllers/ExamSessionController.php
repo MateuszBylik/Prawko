@@ -121,15 +121,38 @@ class ExamSessionController extends Controller
             return redirect()->route('sessions.result', $session);
         }
 
+        // Globalny limit 25 min. Licznik w przeglądarce sam domyka egzamin po jego
+        // upływie, ale gdy karta była zamknięta — egzekwujemy limit tu, po stronie
+        // serwera (fallback na czas z configu, gdyby stara sesja miała pustą kolumnę).
+        $limit = $session->time_limit_seconds ?: (int) config('prawko.exam.time_limit_seconds');
+        $remaining = $limit - (int) $session->started_at->diffInSeconds(now());
+        if ($remaining <= 0) {
+            ($exam ?? app(ExamService::class))->complete($session);
+
+            return redirect()->route('sessions.result', $session);
+        }
+
         // Bez cofania i bez przeskoków — zawsze na bieżącym pytaniu.
         if ($position !== $cursor) {
             return redirect()->route('sessions.question', [$session, $cursor]);
         }
 
+        $session->loadMissing('category');
+
         $current = $session->answers()
             ->where('position', $position)
             ->with(['question.answers', 'question.categories'])
             ->firstOrFail();
+
+        // Liczniki jak na egzaminie PORD: osobno podstawowe i specjalistyczne.
+        $byType = $session->answers()
+            ->with('question:id,type')
+            ->get(['id', 'question_id', 'answered_at'])
+            ->groupBy(fn (UserAnswer $a) => $a->question->type->value);
+        $basic = $byType->get('basic') ?? collect();
+        $specialist = $byType->get('specialist') ?? collect();
+        $basicAnswered = $basic->whereNotNull('answered_at')->count();
+        $specialistAnswered = $specialist->whereNotNull('answered_at')->count();
 
         return view('sessions.exam-question', [
             'session' => $session,
@@ -137,7 +160,12 @@ class ExamSessionController extends Controller
             'question' => $current->question,
             'position' => $position,
             'total' => $session->total_questions,
-            'answeredCount' => $session->answers()->whereNotNull('answered_at')->count(),
+            'answeredCount' => $basicAnswered + $specialistAnswered,
+            'remaining' => $remaining,
+            'basicAnswered' => $basicAnswered,
+            'basicTotal' => $basic->count(),
+            'specialistAnswered' => $specialistAnswered,
+            'specialistTotal' => $specialist->count(),
         ]);
     }
 

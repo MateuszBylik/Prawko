@@ -92,6 +92,13 @@ class ExamVideoFallbackTest extends TestCase
         $this->assertStringContainsString("phase === 'playing'", $html);
         $this->assertStringContainsString('watchFilm()', $html);
 
+        // Regresja: cały obiekt x-data musi zmieścić się w JEDNYM atrybucie. Gdy
+        // wewnątrz trafi się znak " (np. w komentarzu), atrybut urywa się, Alpine
+        // nie startuje, a reszta kodu JS wysypuje się jako tekst na stronę. Skoro
+        // `finishExam` jest blisko końca obiektu, jego obecność w nieprzerwanym
+        // `x-data="[^"]*"` dowodzi, że atrybut nie został ucięty w środku.
+        $this->assertMatchesRegularExpression('/x-data="[^"]*finishExam/', $html);
+
         // Awarie w połowie strumienia: `play().catch()` łapie tylko brak startu.
         $this->assertStringContainsString('x-on:error="filmEnded()"', $html);
         $this->assertStringContainsString('x-on:abort="filmEnded()"', $html);
