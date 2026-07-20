@@ -31,6 +31,17 @@ return [
     'resume' => [
         'text' => 'Masz niedokończoną sesję (:mode) — możesz do niej wrócić.',
         'button' => 'Wznów sesję',
+        'exam_over' => 'Czas egzaminu dobiegł końca.',
+        'see_result' => 'Zobacz wynik',
+    ],
+
+    'express' => [
+        'title' => 'Tryb ekspresowy',
+        'lead' => 'Utrwal lub odpowiedz poprawnie każde pytanie przed egzaminem.',
+        'start' => 'Ćwicz ekspresowo (:n)',
+        'done' => 'Cała pula opanowana 🎉',
+        'progress' => 'Utrwalone lub poprawne: :satisfied / :total',
+        'remaining' => 'zostało :n (≈:perday dziennie)',
     ],
 
     'plan' => [
@@ -57,8 +68,8 @@ return [
     ],
 
     'start' => [
-        'title' => 'Rozpocznij ćwiczenie',
-        'lead' => '<strong>Nauka</strong> daje feedback od razu. <strong>Egzamin próbny</strong> to symulacja testu (:count pytań, limit czasu).',
+        'title' => 'Egzamin próbny',
+        'lead' => 'Sprawdź się w warunkach jak na egzaminie: :count pytań, limit czasu, wynik dopiero na końcu.',
         'category' => 'Kategoria :code',
         'change' => 'Zmień',
         'practice' => 'Rozpocznij naukę',

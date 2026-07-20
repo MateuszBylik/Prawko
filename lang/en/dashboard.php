@@ -31,6 +31,17 @@ return [
     'resume' => [
         'text' => 'You have an unfinished session (:mode) — you can go back to it.',
         'button' => 'Resume session',
+        'exam_over' => 'The exam time is up.',
+        'see_result' => 'See result',
+    ],
+
+    'express' => [
+        'title' => 'Express mode',
+        'lead' => 'Master or answer every question correctly before the exam.',
+        'start' => 'Express practice (:n)',
+        'done' => 'Whole pool mastered 🎉',
+        'progress' => 'Mastered or correct: :satisfied / :total',
+        'remaining' => ':n left (≈:perday per day)',
     ],
 
     'plan' => [
@@ -57,8 +68,8 @@ return [
     ],
 
     'start' => [
-        'title' => 'Start practising',
-        'lead' => '<strong>Practice</strong> gives feedback right away. A <strong>mock exam</strong> simulates the test (:count questions, time limit).',
+        'title' => 'Mock exam',
+        'lead' => 'Test yourself under real exam conditions: :count questions, a time limit, and your score only at the end.',
         'category' => 'Category :code',
         'change' => 'Change',
         'practice' => 'Start practice',

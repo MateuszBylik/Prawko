@@ -55,6 +55,7 @@ return [
     'errors' => [
         'no_questions' => 'No active questions for the selected category.',
         'no_new_questions' => 'No new questions — you have already covered the whole pool for this category.',
+        'express_done' => 'The whole pool is already mastered or answered correctly — nothing left for express mode.',
         'no_category' => 'Choose a driving licence category before you start studying.',
         'pick_category' => 'Choose a driving licence category.',
     ],

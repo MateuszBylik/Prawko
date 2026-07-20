@@ -35,9 +35,11 @@ class ExamService
         $questions = match ($mode) {
             ExamMode::Exam => $this->buildExamSheet($category),
             ExamMode::Diagnosis => $this->buildDiagnosisSheet($category),
-            default => $scope === 'new'
-                ? $this->buildNewSheet($user, $category, $size)
-                : $this->buildPracticeSheet($user, $category, $size),
+            default => match ($scope) {
+                'new' => $this->buildNewSheet($user, $category, $size),
+                'express' => $this->buildExpressSheet($user, $category, $size),
+                default => $this->buildPracticeSheet($user, $category, $size),
+            },
         };
 
         if ($questions->isEmpty()) {
@@ -273,6 +275,31 @@ class ExamService
         // bo „brak pytań w kategorii" (no_questions) sugerowałby pustą bazę.
         if ($sheet->isEmpty()) {
             throw new RuntimeException(__('enums.errors.no_new_questions'));
+        }
+
+        return $sheet;
+    }
+
+    /**
+     * Zestaw ekspresowy: pytania kategorii jeszcze NIE „utrwalone ani odpowiedziane
+     * poprawnie". Warunek spełnienia = `streak ≥ 1` (streak zeruje się przy błędzie,
+     * więc ≥ 1 znaczy, że OSTATNIA odpowiedź była poprawna; ≥ 2 to „utrwalone").
+     * Niespełnione = brak stanu (nigdy nie odpowiedziane) albo ostatnio błędnie.
+     * Cel trybu: przed egzaminem doprowadzić całą pulę do streak ≥ 1.
+     */
+    private function buildExpressSheet(User $user, DrivingCategory $category, ?int $size = null): Collection
+    {
+        $size = max(1, min(100, $size ?? (int) config('prawko.express.session_size')));
+
+        $sheet = Question::query()->active()->forCategory($category->id)
+            ->whereNotIn('id', QuestionUserStat::query()
+                ->where('user_id', $user->id)->where('streak', '>=', 1)
+                ->select('question_id'))
+            ->inRandomOrder()->limit($size)->get();
+
+        // Pusto = cała pula jest już utrwalona lub odpowiedziana poprawnie.
+        if ($sheet->isEmpty()) {
+            throw new RuntimeException(__('enums.errors.express_done'));
         }
 
         return $sheet;

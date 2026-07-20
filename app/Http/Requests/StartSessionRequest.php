@@ -26,8 +26,9 @@ class StartSessionRequest extends FormRequest
             'mode' => ['required', Rule::enum(ExamMode::class)],
             // Opcjonalna wielkość sesji nauki (dzienna dawka z planu).
             'size' => ['nullable', 'integer', 'min:1', 'max:100'],
-            // Zawężenie sesji nauki. Na razie tylko „new" = tylko nowe pytania.
-            'scope' => ['nullable', Rule::in(['new'])],
+            // Zawężenie sesji nauki: „new" = tylko nowe pytania; „express" = tryb
+            // ekspresowy (pytania jeszcze nie utrwalone ani odpowiedziane poprawnie).
+            'scope' => ['nullable', Rule::in(['new', 'express'])],
         ];
     }
 }

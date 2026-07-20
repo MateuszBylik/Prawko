@@ -19,7 +19,7 @@ use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 #[ObservedBy(UserObserver::class)]
-#[Fillable(['name', 'email', 'password', 'role', 'school_id', 'driving_category_id', 'locale', 'phone', 'exam_date'])]
+#[Fillable(['name', 'email', 'password', 'role', 'school_id', 'driving_category_id', 'locale', 'phone', 'exam_date', 'express_mode'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -38,6 +38,7 @@ class User extends Authenticatable
             'skill_theta' => 'float', // θ_u — utajona umiejętność (silnik wiedzy)
             'exam_date' => 'date',
             'exam_prompt_snoozed_on' => 'date',
+            'express_mode' => 'boolean',
         ];
     }
 

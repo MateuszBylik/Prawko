@@ -58,6 +58,7 @@ return [
     'errors' => [
         'no_questions' => 'Brak aktywnych pytań dla wybranej kategorii.',
         'no_new_questions' => 'Brak nowych pytań — całą pulę tej kategorii masz już przerobioną.',
+        'express_done' => 'Cała pula jest już utrwalona lub odpowiedziana poprawnie — nie ma czego ćwiczyć ekspresowo.',
         'no_category' => 'Wybierz kategorię prawa jazdy, zanim zaczniesz naukę.',
         'pick_category' => 'Wybierz kategorię prawa jazdy.',
     ],

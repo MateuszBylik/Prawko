@@ -20,4 +20,14 @@ class StudyPlanController extends Controller
             ? __('app.plan.saved')
             : __('app.plan.removed'));
     }
+
+    /** Przełącznik trybu ekspresowego (lepki na koncie). */
+    public function toggleExpress(Request $request): RedirectResponse
+    {
+        $data = $request->validate(['express_mode' => ['required', 'boolean']]);
+
+        $request->user()->update(['express_mode' => (bool) $data['express_mode']]);
+
+        return back();
+    }
 }

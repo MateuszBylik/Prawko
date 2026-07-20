@@ -6,6 +6,22 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.3.0] — 2026-07-20
+
+### Dodane
+- Tryb ekspresowy — przełącznik w oknie „Plan na egzamin", dostępny w ostatnim
+  tygodniu przed egzaminem. Doprowadza każde pytanie kategorii do stanu „utrwalone
+  lub odpowiedziane poprawnie" (streak ≥ 1). Włączony zmienia dzienną dawkę na sesje
+  z pytań jeszcze niespełnionych i chowa „Nowe pytania" (są jego podzbiorem);
+  zapamiętywany na koncie.
+
+### Zmienione
+- Egzamin: wracać do przerwanej sesji („Wznów sesję") wolno tylko z zapasem
+  > 10 min. Poniżej progu (albo po upływie 25 min) wejście domyka egzamin z obecnymi
+  odpowiedziami i pokazuje wynik — nieudzielone pytania = 0 pkt (0% gdy nic nie
+  ruszone). Banner pulpitu pokazuje wtedy „Zobacz wynik".
+- Karta startu na pulpicie zawiera już tylko „Egzamin próbny" — naukę prowadzi plan.
+
 ## [1.2.1] — 2026-07-20
 
 ### Naprawione
@@ -67,6 +83,7 @@ Pierwsze oznaczone wydanie. Aplikacja działa produkcyjnie od 2026-07-16.
 - Wielojęzyczność: PL (źródło), EN, DE, UK.
 - Panel administratora użytkowników.
 
+[1.3.0]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.3.0
 [1.2.1]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.2.1
 [1.2.0]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.2.0
 [1.1.0]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.1.0

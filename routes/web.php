@@ -59,6 +59,7 @@ Route::middleware(['auth', 'verified', 'no-admin', 'category'])->group(function 
 
     // Plan nauki: zapis/usunięcie daty egzaminu.
     Route::post('/plan', [StudyPlanController::class, 'update'])->name('plan.update');
+    Route::post('/plan/ekspres', [StudyPlanController::class, 'toggleExpress'])->name('plan.express');
 
     // Dzień egzaminu: „jak poszło?" (zdałem / nie zdałem / będę dziś / zmiana terminu).
     Route::post('/egzamin-panstwowy', [ExamDayController::class, 'respond'])->name('exam.day.respond');

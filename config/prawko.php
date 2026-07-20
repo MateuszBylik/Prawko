@@ -15,6 +15,10 @@ return [
     'exam' => [
         'time_limit_seconds' => 25 * 60, // 25 minut
         'pass_threshold' => 68,          // wymagane punkty (na 74)
+        // Wracać do przerwanego egzaminu („Wznów sesję") wolno tylko z zapasem
+        // czasu WIĘKSZYM niż ten próg. Poniżej (lub po upływie limitu) sesja jest
+        // domykana z obecnymi odpowiedziami — bez wznawiania (brak odpowiedzi = 0 pkt).
+        'min_resume_seconds' => 10 * 60, // 10 minut
 
         // Skład arkusza: [typ pytania, waga punktowa, liczba pytań].
         // Razem: 20 podstawowych + 12 specjalistycznych = 32 pytania, max 74 pkt.
@@ -67,6 +71,14 @@ return [
         // pokrycie puli szło do przodu mimo że kolejka ryzyka spycha niewidziane
         // na dół. Reszta to powtórki + najsłabsze (kolejka ryzyka).
         'new_ratio' => 0.2,
+    ],
+
+    // Tryb ekspresowy (końcówka przed egzaminem): dowieźć KAŻDE pytanie kategorii
+    // do stanu „utrwalone lub odpowiedziane poprawnie" = streak ≥ 1 w FSRS
+    // (streak zeruje się przy błędzie, więc ≥ 1 znaczy „ostatnio poprawnie").
+    'express' => [
+        'available_within_days' => 7, // przycisk w oknie planu, gdy do egzaminu ≤ tydzień
+        'session_size' => 32,         // wielkość jednej sesji ekspresowej
     ],
 
     // Plan pod datę egzaminu (Etap 8).

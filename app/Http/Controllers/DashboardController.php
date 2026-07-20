@@ -80,6 +80,45 @@ class DashboardController extends Controller
             $historian->record($user, $examCategory, $forecastResult);
         }
 
+        $plan = ($examCategory && $forecastResult) ? $planner->build($user, $examCategory, $forecastResult) : null;
+
+        // Tryb ekspresowy — dostępny w oknie planu tylko w ostatnim tygodniu przed
+        // egzaminem; działa jak „lepki" przełącznik konta. „Do zrobienia" = pytania
+        // kategorii jeszcze nie utrwalone ani odpowiedziane poprawnie (streak < 1).
+        $expressAvailable = $examCategory && $plan && $plan->hasDate() && $plan->status !== 'past'
+            && $plan->daysLeft <= (int) config('prawko.express.available_within_days');
+
+        $express = null;
+        if ($expressAvailable) {
+            $unsatisfied = Question::query()->active()->forCategory($examCategory->id)
+                ->whereNotIn('id', QuestionUserStat::query()
+                    ->where('user_id', $user->id)->where('streak', '>=', 1)
+                    ->select('question_id'))
+                ->count();
+
+            $express = [
+                'total' => $plan->total,
+                'satisfied' => max(0, $plan->total - $unsatisfied),
+                'unsatisfied' => $unsatisfied,
+                'per_day' => (int) ceil($unsatisfied / max(1, $plan->daysLeft)),
+                'size' => max(1, min($unsatisfied ?: 1, (int) config('prawko.express.session_size'))),
+            ];
+        }
+
+        $expressOn = $expressAvailable && (bool) $user->express_mode;
+
+        $inProgress = $user->examSessions()
+            ->where('status', ExamStatus::InProgress->value)
+            ->latest()->first();
+
+        // Banner „Wznów sesję": dla egzaminu bez zapasu czasu (≤ próg lub po limicie)
+        // wznowienie i tak domknie sesję — pokazujemy wprost „Zobacz wynik".
+        $resumeLocked = $inProgress
+            && $inProgress->mode === ExamMode::Exam
+            && ($inProgress->time_limit_seconds ?: (int) config('prawko.exam.time_limit_seconds'))
+                - (int) $inProgress->started_at->diffInSeconds(now())
+                <= (int) config('prawko.exam.min_resume_seconds');
+
         return view('dashboard', [
             'forecastHistory' => $examCategory
                 ? $historian->history($user, $examCategory)
@@ -91,11 +130,13 @@ class DashboardController extends Controller
             'examSize' => collect(config('prawko.exam.composition'))->sum(fn ($l) => $l[2]),
             'needsDiagnosis' => $needsDiagnosis,
             'forecast' => $forecastResult,
-            'plan' => ($examCategory && $forecastResult) ? $planner->build($user, $examCategory, $forecastResult) : null,
+            'plan' => $plan,
+            'express' => $express,
+            'expressAvailable' => $expressAvailable,
+            'expressOn' => $expressOn,
             'riskQuestions' => $examCategory ? $risk->topQuestions($user, $examCategory, 6) : collect(),
-            'inProgress' => $user->examSessions()
-                ->where('status', ExamStatus::InProgress->value)
-                ->latest()->first(),
+            'inProgress' => $inProgress,
+            'resumeLocked' => $resumeLocked,
             'recentSessions' => $user->examSessions()
                 ->completed()->with('category')->latest('completed_at')->limit(6)->get(),
         ]);

@@ -124,9 +124,9 @@
         @if ($inProgress)
             <div class="card flex flex-wrap items-center justify-between gap-3 border-amber-200 bg-amber-50 p-4 dark:border-amber-500/30 dark:bg-amber-500/10">
                 <p class="text-sm font-medium text-amber-800 dark:text-amber-200">
-                    {{ __('dashboard.resume.text', ['mode' => $inProgress->mode->label()]) }}
+                    {{ $resumeLocked ? __('dashboard.resume.exam_over') : __('dashboard.resume.text', ['mode' => $inProgress->mode->label()]) }}
                 </p>
-                <a href="{{ route('sessions.show', $inProgress) }}" class="btn btn-brand btn-sm">{{ __('dashboard.resume.button') }}</a>
+                <a href="{{ route('sessions.show', $inProgress) }}" class="btn btn-brand btn-sm">{{ $resumeLocked ? __('dashboard.resume.see_result') : __('dashboard.resume.button') }}</a>
             </div>
         @endif
 
@@ -180,66 +180,122 @@
                     {{-- Dzisiejsza dawka: liczba mówi ILE ZOSTAŁO, pasek pokazuje zrobione.
                          Cel jest ustalony na początek dnia, więc każde pytanie zdejmuje z niego 1. --}}
                     <div class="mt-5 rounded-xl border border-slate-200 bg-slate-50 p-4 dark:border-slate-800 dark:bg-slate-800/40">
-                        <div class="flex flex-wrap items-center justify-between gap-3">
-                            <div class="text-sm">
-                                <div class="font-semibold text-slate-800 dark:text-slate-100 tnum">
-                                    {{ $plan->doseDone()
-                                        ? __('dashboard.plan.dose_done')
-                                        : __('dashboard.plan.dose_left', ['n' => $plan->dailyDose]) }}
+                        {{-- Przełącznik trybu ekspresowego — tylko w ostatnim tygodniu przed
+                             egzaminem. ON = główny przycisk i liczby kafelka stają się ekspresowe,
+                             a „Nowe pytania" znikają (są podzbiorem ekspresu). --}}
+                        @if ($expressAvailable)
+                            <div class="mb-4 flex items-center justify-between gap-3 border-b border-slate-200 pb-3 dark:border-slate-700">
+                                <div class="flex items-start gap-2.5">
+                                    <svg class="mt-0.5 h-5 w-5 shrink-0 {{ $expressOn ? 'text-brand-600 dark:text-brand-400' : 'text-slate-400 dark:text-slate-500' }}" fill="currentColor" viewBox="0 0 24 24"><path d="M13 2 3 14h7l-1 8 10-12h-7l1-8Z"/></svg>
+                                    <div>
+                                        <p class="text-sm font-semibold text-slate-800 dark:text-slate-100">{{ __('dashboard.express.title') }}</p>
+                                        <p class="mt-0.5 text-xs text-slate-500 dark:text-slate-400">{{ __('dashboard.express.lead') }}</p>
+                                    </div>
                                 </div>
-                                <div class="mt-0.5 text-xs text-slate-500 dark:text-slate-400 tnum">
-                                    {{ __('dashboard.plan.dose_detail', ['done' => $plan->newDoneToday, 'target' => $plan->newPerDay]) }}
-                                    @if ($plan->dueToday > 0)
-                                        · {{ __('dashboard.plan.dose_reviews', ['n' => $plan->dueToday]) }}
-                                    @endif
-                                    · {{ __('dashboard.plan.pace', ['pace' => $plan->recentPace]) }}
-                                    <span class="text-slate-400 dark:text-slate-500">{{ __('dashboard.plan.pace_days', ['n' => $plan->paceDays]) }}</span>
-                                </div>
+                                <form method="POST" action="{{ route('plan.express') }}" class="shrink-0">
+                                    @csrf
+                                    <input type="hidden" name="express_mode" value="{{ $expressOn ? 0 : 1 }}">
+                                    <button type="submit" role="switch" aria-checked="{{ $expressOn ? 'true' : 'false' }}"
+                                            aria-label="{{ __('dashboard.express.title') }}"
+                                            class="relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition {{ $expressOn ? 'bg-brand-600' : 'bg-slate-300 dark:bg-slate-600' }}">
+                                        <span class="inline-block h-4 w-4 transform rounded-full bg-white shadow transition {{ $expressOn ? 'translate-x-6' : 'translate-x-1' }}"></span>
+                                    </button>
+                                </form>
                             </div>
-                            @if ($examCategory)
-                                <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
-                                    <form method="POST" action="{{ route('sessions.store') }}">
+                        @endif
+
+                        @if ($expressOn)
+                            {{-- Tryb ekspresowy włączony: dawka = pytania jeszcze niespełnione. --}}
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <div class="text-sm">
+                                    <div class="font-semibold text-slate-800 dark:text-slate-100 tnum">
+                                        {{ $express['unsatisfied'] > 0
+                                            ? __('dashboard.express.remaining', ['n' => $express['unsatisfied'], 'perday' => $express['per_day']])
+                                            : __('dashboard.express.done') }}
+                                    </div>
+                                    <div class="mt-0.5 text-xs text-slate-500 dark:text-slate-400 tnum">
+                                        {{ __('dashboard.express.progress', ['satisfied' => $express['satisfied'], 'total' => $express['total']]) }}
+                                    </div>
+                                </div>
+                                @if ($examCategory && $express['unsatisfied'] > 0)
+                                    <form method="POST" action="{{ route('sessions.store') }}" class="shrink-0">
                                         @csrf
                                         <input type="hidden" name="mode" value="practice">
-                                        <input type="hidden" name="size" value="{{ $plan->sessionSize }}">
-                                        <button type="submit" class="btn {{ $plan->doseDone() ? 'btn-outline' : 'btn-brand' }} btn-sm w-full sm:w-auto">
-                                            {{ $plan->doseDone() ? __('dashboard.plan.keep_going') : __('dashboard.plan.start_dose') }} ({{ $plan->sessionSize }})
+                                        <input type="hidden" name="scope" value="express">
+                                        <input type="hidden" name="size" value="{{ $express['size'] }}">
+                                        <button type="submit" class="btn btn-brand btn-sm w-full sm:w-auto">
+                                            {{ __('dashboard.express.start', ['n' => $express['size']]) }}
                                         </button>
                                     </form>
-                                    {{-- Nauka tylko nowych — domyślna nauka dobiera wg ryzyka i powtórek,
-                                         więc świadome domykanie pokrycia dostaje własny przycisk. --}}
-                                    @if (! empty($newCount))
+                                @endif
+                            </div>
+
+                            <div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                                <div class="h-full rounded-full bg-brand-600 transition-all dark:bg-brand-500"
+                                     style="width: {{ $express['total'] ? round($express['satisfied'] / $express['total'] * 100) : 100 }}%"></div>
+                            </div>
+                        @else
+                            <div class="flex flex-wrap items-center justify-between gap-3">
+                                <div class="text-sm">
+                                    <div class="font-semibold text-slate-800 dark:text-slate-100 tnum">
+                                        {{ $plan->doseDone()
+                                            ? __('dashboard.plan.dose_done')
+                                            : __('dashboard.plan.dose_left', ['n' => $plan->dailyDose]) }}
+                                    </div>
+                                    <div class="mt-0.5 text-xs text-slate-500 dark:text-slate-400 tnum">
+                                        {{ __('dashboard.plan.dose_detail', ['done' => $plan->newDoneToday, 'target' => $plan->newPerDay]) }}
+                                        @if ($plan->dueToday > 0)
+                                            · {{ __('dashboard.plan.dose_reviews', ['n' => $plan->dueToday]) }}
+                                        @endif
+                                        · {{ __('dashboard.plan.pace', ['pace' => $plan->recentPace]) }}
+                                        <span class="text-slate-400 dark:text-slate-500">{{ __('dashboard.plan.pace_days', ['n' => $plan->paceDays]) }}</span>
+                                    </div>
+                                </div>
+                                @if ($examCategory)
+                                    <div class="flex shrink-0 flex-col gap-2 sm:flex-row sm:items-center">
                                         <form method="POST" action="{{ route('sessions.store') }}">
                                             @csrf
                                             <input type="hidden" name="mode" value="practice">
-                                            <input type="hidden" name="scope" value="new">
-                                            <input type="hidden" name="size" value="{{ $examSize }}">
-                                            <button type="submit" class="btn btn-outline btn-sm w-full sm:w-auto">
-                                                {{ __('dashboard.start.only_new', ['n' => min($newCount, $examSize)]) }}
+                                            <input type="hidden" name="size" value="{{ $plan->sessionSize }}">
+                                            <button type="submit" class="btn {{ $plan->doseDone() ? 'btn-outline' : 'btn-brand' }} btn-sm w-full sm:w-auto">
+                                                {{ $plan->doseDone() ? __('dashboard.plan.keep_going') : __('dashboard.plan.start_dose') }} ({{ $plan->sessionSize }})
                                             </button>
                                         </form>
-                                    @endif
-                                </div>
-                            @endif
-                        </div>
+                                        {{-- Nauka tylko nowych — domyślna nauka dobiera wg ryzyka i powtórek,
+                                             więc świadome domykanie pokrycia dostaje własny przycisk. --}}
+                                        @if (! empty($newCount))
+                                            <form method="POST" action="{{ route('sessions.store') }}">
+                                                @csrf
+                                                <input type="hidden" name="mode" value="practice">
+                                                <input type="hidden" name="scope" value="new">
+                                                <input type="hidden" name="size" value="{{ $examSize }}">
+                                                <button type="submit" class="btn btn-outline btn-sm w-full sm:w-auto">
+                                                    {{ __('dashboard.start.only_new', ['n' => min($newCount, $examSize)]) }}
+                                                </button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                @endif
+                            </div>
 
-                        <div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
-                            <div class="h-full rounded-full transition-all {{ $plan->doseDone() ? 'bg-emerald-500' : 'bg-brand-600 dark:bg-brand-500' }}"
-                                 style="width: {{ $plan->newProgressPercent() }}%"></div>
-                        </div>
+                            <div class="mt-3 h-1.5 w-full overflow-hidden rounded-full bg-slate-200 dark:bg-slate-700">
+                                <div class="h-full rounded-full transition-all {{ $plan->doseDone() ? 'bg-emerald-500' : 'bg-brand-600 dark:bg-brand-500' }}"
+                                     style="width: {{ $plan->newProgressPercent() }}%"></div>
+                            </div>
 
-                        {{-- Karta pokazuje obok „cel 95%", ale dawka liczy się z CZEGO INNEGO:
-                             z przerobienia całej puli do dnia egzaminu. Dwa różne cele obok
-                             siebie bez wyjaśnienia to zagadka — mówimy wprost, skąd liczba. --}}
-                        <p class="mt-2.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
-                            {!! __('dashboard.plan.goal_note', [
-                                'unseen' => $plan->unseen,
-                                'total' => $plan->total,
-                                'days' => trans_choice('dashboard.plan.days_choice', $plan->daysLeft, ['n' => $plan->daysLeft]),
-                                'perday' => $plan->newPerDay,
-                                'target' => $plan->targetPercent(),
-                            ]) !!}
-                        </p>
+                            {{-- Karta pokazuje obok „cel 95%", ale dawka liczy się z CZEGO INNEGO:
+                                 z przerobienia całej puli do dnia egzaminu. Dwa różne cele obok
+                                 siebie bez wyjaśnienia to zagadka — mówimy wprost, skąd liczba. --}}
+                            <p class="mt-2.5 text-xs leading-relaxed text-slate-500 dark:text-slate-400">
+                                {!! __('dashboard.plan.goal_note', [
+                                    'unseen' => $plan->unseen,
+                                    'total' => $plan->total,
+                                    'days' => trans_choice('dashboard.plan.days_choice', $plan->daysLeft, ['n' => $plan->daysLeft]),
+                                    'perday' => $plan->newPerDay,
+                                    'target' => $plan->targetPercent(),
+                                ]) !!}
+                            </p>
+                        @endif
                     </div>
 
                     <details class="group mt-3">
@@ -295,10 +351,7 @@
                             </a>
                         </div>
                     @endif
-                    <div class="flex flex-col gap-2 sm:flex-row">
-                        <button type="submit" name="mode" value="practice" class="btn btn-brand w-full">{{ __('dashboard.start.practice') }}</button>
-                        <button type="submit" name="mode" value="exam" class="btn btn-dark w-full">{{ __('dashboard.start.exam') }}</button>
-                    </div>
+                    <button type="submit" name="mode" value="exam" class="btn btn-dark w-full">{{ __('dashboard.start.exam') }}</button>
                 </form>
             </div>
 

@@ -46,7 +46,7 @@ class ExamSessionController extends Controller
     }
 
     /** Wchodzi do sesji: kieruje do pierwszego nieudzielonego pytania lub do wyniku. */
-    public function show(ExamSession $session): RedirectResponse
+    public function show(ExamSession $session, ExamService $exam): RedirectResponse
     {
         $this->authorize('view', $session);
 
@@ -54,10 +54,28 @@ class ExamSessionController extends Controller
             return redirect()->route('sessions.result', $session);
         }
 
+        // Egzamin: wracać („Wznów sesję") wolno tylko z realnym zapasem czasu. Gdy do
+        // końca zostało ≤ próg (albo limit minął), domykamy sesję z obecnymi
+        // odpowiedziami i pokazujemy wynik — bez wznawiania. Nieudzielone = 0 pkt.
+        if ($session->mode === ExamMode::Exam
+            && $this->examRemainingSeconds($session) <= (int) config('prawko.exam.min_resume_seconds')) {
+            $exam->complete($session);
+
+            return redirect()->route('sessions.result', $session);
+        }
+
         $target = $session->answers()->whereNull('answered_at')->orderBy('position')->first()
             ?? $session->answers()->orderBy('position')->first();
 
         return redirect()->route('sessions.question', [$session, $target->position]);
+    }
+
+    /** Sekundy do końca egzaminu (fallback na limit z configu, gdy kolumna pusta). */
+    private function examRemainingSeconds(ExamSession $session): int
+    {
+        $limit = $session->time_limit_seconds ?: (int) config('prawko.exam.time_limit_seconds');
+
+        return $limit - (int) $session->started_at->diffInSeconds(now());
     }
 
     /** Wyświetla pojedyncze pytanie sesji. */
@@ -124,8 +142,7 @@ class ExamSessionController extends Controller
         // Globalny limit 25 min. Licznik w przeglądarce sam domyka egzamin po jego
         // upływie, ale gdy karta była zamknięta — egzekwujemy limit tu, po stronie
         // serwera (fallback na czas z configu, gdyby stara sesja miała pustą kolumnę).
-        $limit = $session->time_limit_seconds ?: (int) config('prawko.exam.time_limit_seconds');
-        $remaining = $limit - (int) $session->started_at->diffInSeconds(now());
+        $remaining = $this->examRemainingSeconds($session);
         if ($remaining <= 0) {
             ($exam ?? app(ExamService::class))->complete($session);
 

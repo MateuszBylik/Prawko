@@ -31,6 +31,17 @@ return [
     'resume' => [
         'text' => 'Du hast eine unbeendete Sitzung (:mode) — du kannst zu ihr zurück.',
         'button' => 'Sitzung fortsetzen',
+        'exam_over' => 'Die Prüfungszeit ist abgelaufen.',
+        'see_result' => 'Ergebnis ansehen',
+    ],
+
+    'express' => [
+        'title' => 'Express-Modus',
+        'lead' => 'Beherrsche oder beantworte jede Frage vor der Prüfung richtig.',
+        'start' => 'Express-Übung (:n)',
+        'done' => 'Ganzer Pool beherrscht 🎉',
+        'progress' => 'Beherrscht oder richtig: :satisfied / :total',
+        'remaining' => 'noch :n (≈:perday pro Tag)',
     ],
 
     'plan' => [
@@ -57,8 +68,8 @@ return [
     ],
 
     'start' => [
-        'title' => 'Übung starten',
-        'lead' => '<strong>Lernen</strong> gibt sofort Rückmeldung. Die <strong>Übungsprüfung</strong> simuliert den Test (:count Fragen, Zeitlimit).',
+        'title' => 'Übungsprüfung',
+        'lead' => 'Teste dich unter echten Prüfungsbedingungen: :count Fragen, Zeitlimit und das Ergebnis erst am Ende.',
         'category' => 'Klasse :code',
         'change' => 'Ändern',
         'practice' => 'Lernen starten',

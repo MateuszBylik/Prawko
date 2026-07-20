@@ -55,6 +55,7 @@ return [
     'errors' => [
         'no_questions' => 'Keine aktiven Fragen für die gewählte Klasse.',
         'no_new_questions' => 'Keine neuen Fragen — du hast den gesamten Fragenpool dieser Klasse bereits bearbeitet.',
+        'express_done' => 'Der ganze Pool ist bereits beherrscht oder richtig beantwortet — nichts mehr für den Express-Modus.',
         'no_category' => 'Wähle eine Führerscheinklasse, bevor du mit dem Lernen beginnst.',
         'pick_category' => 'Wähle eine Führerscheinklasse.',
     ],
