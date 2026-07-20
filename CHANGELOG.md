@@ -6,6 +6,17 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.3.2] — 2026-07-21
+
+### Naprawione
+- Ikona odtwarzania filmu: zamiast półprzezroczystego kółka (łapało niebieski
+  kadr filmu i wyglądało jak „niebieski owal") — solidne ciemne kółko z białym,
+  wyśrodkowanym trójkątem.
+
+### Zmienione
+- Przyciski TAK/NIE na egzaminie są węższe (połowa dotychczasowej szerokości —
+  siatka 4-kolumnowa), bliżej realnej wielkości w WORD.
+
 ## [1.3.1] — 2026-07-21
 
 ### Naprawione
@@ -98,6 +109,7 @@ Pierwsze oznaczone wydanie. Aplikacja działa produkcyjnie od 2026-07-16.
 - Wielojęzyczność: PL (źródło), EN, DE, UK.
 - Panel administratora użytkowników.
 
+[1.3.2]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.3.2
 [1.3.1]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.3.1
 [1.3.0]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.3.0
 [1.2.1]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.2.1

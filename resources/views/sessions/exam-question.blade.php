@@ -165,8 +165,8 @@
                         <div class="relative aspect-video w-full bg-slate-900">
                             <button type="button" x-show="!mediaShown" x-on:click="start()"
                                     class="group absolute inset-0 flex flex-col items-center justify-center gap-3 text-center text-slate-200 transition hover:bg-black/20">
-                                <span class="grid h-16 w-16 place-items-center rounded-full bg-white/15 ring-1 ring-white/30 backdrop-blur-sm transition group-hover:bg-white/25">
-                                    <svg class="h-7 w-7 translate-x-[2px]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5.14v13.72a.6.6 0 0 0 .92.5l10.5-6.86a.6.6 0 0 0 0-1l-10.5-6.86a.6.6 0 0 0-.92.5Z"/></svg>
+                                <span class="grid h-14 w-14 place-items-center rounded-full bg-slate-900/70 text-white ring-1 ring-white/40 transition group-hover:bg-slate-900/85">
+                                    <svg class="h-6 w-6 translate-x-[1px]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5.14v13.72a.6.6 0 0 0 .92.5l10.5-6.86a.6.6 0 0 0 0-1l-10.5-6.86a.6.6 0 0 0-.92.5Z"/></svg>
                                 </span>
                                 <span class="text-sm font-medium">{{ __('session.exam.show_video') }}</span>
                             </button>
@@ -206,7 +206,8 @@
                             @csrf
                             <input type="hidden" name="time_spent_ms" x-ref="spent" value="0">
 
-                            <div class="{{ $isSpecialist ? 'space-y-2' : 'grid grid-cols-2 gap-3' }}">
+                            {{-- TAK/NIE węższe (grid-cols-4 → każdy 25% szerokości, jak w WORD). --}}
+                            <div class="{{ $isSpecialist ? 'space-y-2' : 'grid grid-cols-4 gap-3' }}">
                                 @foreach ($question->answers as $a)
                                     @if ($isSpecialist)
                                         <label class="flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-2.5 transition"
