@@ -3,8 +3,9 @@
 @php
     $instantFeedback = $session->mode->givesInstantFeedback();
     $collectsConfidence = $session->mode->collectsConfidence();
+    $isBasic = $question->type->value === 'basic';
     // Budżet czasu na pytanie wg typu (egzaminacyjny model czasowy) — miękka wskazówka.
-    $limitSeconds = $question->type->value === 'basic'
+    $limitSeconds = $isBasic
         ? (int) config('prawko.timing.basic_seconds')
         : (int) config('prawko.timing.specialist_seconds');
     // Odliczanie całej sesji pokazujemy tylko, gdy tryb ma limit czasu (egzamin).
@@ -38,7 +39,7 @@
                  style="width: {{ $total ? round($position / $total * 100) : 0 }}%"></div>
         </div>
 
-        {{-- Odliczanie sesji (egzamin) --}}
+        {{-- Odliczanie sesji (gdy tryb ma limit — praktycznie tylko historyczne sesje) --}}
         @if ($remaining !== null)
             <div class="card flex items-center justify-between gap-3 px-4 py-3"
                  x-data="{
@@ -61,20 +62,23 @@
             </div>
         @endif
 
-        <div class="grid gap-5 lg:grid-cols-4">
+        {{-- Wspólny stan (selected/feedback/timer) obejmuje OBIE kolumny, bo przyciski
+             akcji (wiem/strzelam/dalej) mieszkają teraz w prawej kolumnie, a formularz
+             odpowiedzi w lewej — muszą widzieć to samo `selected`. --}}
+        <div class="grid gap-5 lg:grid-cols-4"
+             x-data="{
+                selected: {{ $current->selected_answer_id ?? 'null' }},
+                t0: Date.now(),
+                elapsed: 0,
+                limit: {{ $limitSeconds }},
+                feedback: {{ $showFeedback ? 'true' : 'false' }},
+                init() { if (!this.feedback) { this._i = setInterval(() => this.elapsed = Math.floor((Date.now() - this.t0) / 1000), 250); } },
+                get mmss() { const s = this.elapsed % 60; return Math.floor(this.elapsed / 60) + ':' + String(s).padStart(2, '0'); }
+             }">
 
-            {{-- Główna kolumna --}}
+            {{-- Główna kolumna: materiał, pytanie i odpowiedzi (pod sobą) --}}
             <div class="space-y-5 lg:col-span-3">
-                <div class="card overflow-hidden"
-                     x-data="{
-                        selected: {{ $current->selected_answer_id ?? 'null' }},
-                        t0: Date.now(),
-                        elapsed: 0,
-                        limit: {{ $limitSeconds }},
-                        feedback: {{ $showFeedback ? 'true' : 'false' }},
-                        init() { if (!this.feedback) { this._i = setInterval(() => this.elapsed = Math.floor((Date.now() - this.t0) / 1000), 250); } },
-                        get mmss() { const s = this.elapsed % 60; return Math.floor(this.elapsed / 60) + ':' + String(s).padStart(2, '0'); }
-                     }">
+                <div class="card overflow-hidden">
 
                     {{-- Materiał (wspólny komponent) --}}
                     <x-question-media :question="$question" />
@@ -83,7 +87,7 @@
                         {{-- Plakietki + licznik pytania --}}
                         <div class="flex items-center justify-between gap-3">
                             <div class="flex flex-wrap items-center gap-1.5">
-                                <span class="badge {{ $question->type->value === 'basic' ? 'badge-brand' : 'badge-amber' }}">{{ $question->type->label() }}</span>
+                                <span class="badge {{ $isBasic ? 'badge-brand' : 'badge-amber' }}">{{ $question->type->label() }}</span>
                                 <span class="badge badge-slate">{{ __('session.review.points', ['n' => $question->points]) }}</span>
                                 @if (! empty($isNew))
                                     <span class="badge badge-emerald gap-1">
@@ -132,18 +136,19 @@
                                 @endif
                             </div>
 
-                            <div class="mt-4 space-y-2.5">
+                            <div class="mt-4 {{ $isBasic ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5' }}">
                                 @foreach ($question->answers as $a)
                                     @php $isChosen = $current->selected_answer_id === $a->id; @endphp
-                                    <div class="flex items-start gap-3 rounded-xl border px-4 py-3
+                                    <div class="rounded-xl border px-4 py-3
                                         {{ $a->is_correct
                                             ? 'border-emerald-300 bg-emerald-50 dark:border-emerald-500/40 dark:bg-emerald-500/10'
-                                            : ($isChosen ? 'border-rose-300 bg-rose-50 dark:border-rose-500/40 dark:bg-rose-500/10' : 'border-slate-200 dark:border-slate-800') }}">
-                                        @if ($question->type->value === 'specialist')
+                                            : ($isChosen ? 'border-rose-300 bg-rose-50 dark:border-rose-500/40 dark:bg-rose-500/10' : 'border-slate-200 dark:border-slate-800') }}
+                                        {{ $isBasic ? 'flex flex-col items-center gap-1.5 text-center' : 'flex items-start gap-3' }}">
+                                        @unless ($isBasic)
                                             <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold
                                                 {{ $a->is_correct ? 'bg-emerald-600 text-white' : ($isChosen ? 'bg-rose-500 text-white' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300') }}">{{ $a->label }}</span>
-                                        @endif
-                                        <span class="flex-1 text-sm {{ $a->is_correct ? 'font-semibold text-emerald-800 dark:text-emerald-200' : 'text-slate-700 dark:text-slate-200' }}">{{ $question->localizedAnswerText($a) }}</span>
+                                        @endunless
+                                        <span class="{{ $isBasic ? 'text-base font-semibold' : 'flex-1 text-sm' }} {{ $a->is_correct ? 'text-emerald-800 dark:text-emerald-200' : 'text-slate-700 dark:text-slate-200' }}">{{ $question->localizedAnswerText($a) }}</span>
                                         @if ($a->is_correct)
                                             <span class="badge badge-emerald shrink-0">{{ __('session.feedback.correct_badge') }}</span>
                                         @elseif ($isChosen)
@@ -164,79 +169,36 @@
                                 </div>
                             @endif
 
-                            <div class="mt-6">
-                                @if ($next)
-                                    <a href="{{ route('sessions.question', [$session, $next]) }}" class="btn btn-brand">{{ __('session.feedback.next') }}</a>
-                                @else
-                                    {{-- Ostatnie pytanie: główny przycisk kończy sesję. --}}
-                                    <button type="submit" form="finish-form" class="btn btn-brand">{{ __('session.actions.finish') }}</button>
-                                @endif
-                            </div>
-
-                        {{-- ===== FORMULARZ ODPOWIEDZI ===== --}}
+                        {{-- ===== FORMULARZ ODPOWIEDZI (same opcje; przyciski w prawej kolumnie) ===== --}}
                         @else
-                            <form method="POST" action="{{ route('sessions.answer', [$session, $position]) }}"
+                            <form id="answer-form" method="POST" action="{{ route('sessions.answer', [$session, $position]) }}"
                                   @submit="$refs.spent.value = Date.now() - t0" class="mt-5">
                                 @csrf
                                 <input type="hidden" name="time_spent_ms" x-ref="spent" value="0">
 
-                                <div class="space-y-2.5">
+                                <div class="{{ $isBasic ? 'grid grid-cols-2 gap-2.5' : 'space-y-2.5' }}">
                                     @foreach ($question->answers as $a)
-                                        <label class="flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition"
-                                               :class="selected === {{ $a->id }}
-                                                   ? 'border-brand-500 bg-brand-50 ring-2 ring-brand-200 dark:border-brand-400 dark:bg-brand-500/10 dark:ring-brand-500/30'
-                                                   : 'border-slate-200 hover:border-brand-300 dark:border-slate-800 dark:hover:border-brand-500/40'">
-                                            <input type="radio" name="answer_id" value="{{ $a->id }}" x-model.number="selected" class="sr-only">
-                                            @if ($question->type->value === 'specialist')
+                                        @if ($isBasic)
+                                            <label class="flex cursor-pointer items-center justify-center rounded-xl border px-4 py-3.5 text-center text-base font-semibold transition"
+                                                   :class="selected === {{ $a->id }}
+                                                       ? 'border-brand-500 bg-brand-50 text-brand-700 ring-2 ring-brand-200 dark:border-brand-400 dark:bg-brand-500/10 dark:text-brand-200 dark:ring-brand-500/30'
+                                                       : 'border-slate-200 text-slate-800 hover:border-brand-300 dark:border-slate-800 dark:text-slate-100 dark:hover:border-brand-500/40'">
+                                                <input type="radio" name="answer_id" value="{{ $a->id }}" x-model.number="selected" class="sr-only">
+                                                {{ $question->localizedAnswerText($a) }}
+                                            </label>
+                                        @else
+                                            <label class="flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-3 transition"
+                                                   :class="selected === {{ $a->id }}
+                                                       ? 'border-brand-500 bg-brand-50 ring-2 ring-brand-200 dark:border-brand-400 dark:bg-brand-500/10 dark:ring-brand-500/30'
+                                                       : 'border-slate-200 hover:border-brand-300 dark:border-slate-800 dark:hover:border-brand-500/40'">
+                                                <input type="radio" name="answer_id" value="{{ $a->id }}" x-model.number="selected" class="sr-only">
                                                 <span class="mt-0.5 grid h-6 w-6 shrink-0 place-items-center rounded-full text-xs font-bold transition"
                                                       :class="selected === {{ $a->id }} ? 'bg-brand-600 text-white' : 'bg-slate-200 text-slate-600 dark:bg-slate-700 dark:text-slate-300'">{{ $a->label }}</span>
-                                            @endif
-                                            <span class="flex-1 text-sm text-slate-800 dark:text-slate-100">{{ $question->localizedAnswerText($a) }}</span>
-                                        </label>
+                                                <span class="flex-1 text-sm text-slate-800 dark:text-slate-100">{{ $question->localizedAnswerText($a) }}</span>
+                                            </label>
+                                        @endif
                                     @endforeach
                                 </div>
-
-                                @if ($collectsConfidence)
-                                    {{-- Ocena pewności ZAMIAST zwykłego „Sprawdź" — nie obok niego.
-                                         Dwa przyciski to nadal jeden tap, więc nauka nic nie kosztuje
-                                         więcej, a silnik dostaje sygnał, którego z samej poprawności
-                                         odtworzyć się nie da: czy wiedziałeś, czy trafiłeś. --}}
-                                    <div class="mt-6">
-                                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                                            {{ __('session.confidence.prompt') }}
-                                        </p>
-                                        <div class="mt-2.5 flex flex-col gap-2 sm:flex-row">
-                                            <button type="submit" name="confidence" value="{{ Confidence::Sure->value }}"
-                                                    :disabled="selected === null"
-                                                    class="btn btn-brand w-full disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
-                                                {{ __('enums.confidence.sure') }}
-                                            </button>
-                                            <button type="submit" name="confidence" value="{{ Confidence::Guess->value }}"
-                                                    :disabled="selected === null"
-                                                    class="btn btn-outline w-full disabled:cursor-not-allowed disabled:opacity-40 sm:w-auto">
-                                                {{ __('enums.confidence.guess') }}
-                                            </button>
-                                        </div>
-                                        <p class="mt-2.5 text-xs text-slate-400 dark:text-slate-500">
-                                            {{ __('session.confidence.hint') }}
-                                        </p>
-                                    </div>
-                                @else
-                                    <div class="mt-6 flex items-center gap-4">
-                                        {{-- Bez natychmiastowego feedbacku (diagnoza) ostatnie pytanie od razu
-                                             kończy sesję — kontroler domyka ją po zapisaniu odpowiedzi. --}}
-                                        <button type="submit" :disabled="selected === null" class="btn btn-brand disabled:cursor-not-allowed disabled:opacity-40">
-                                            @if ($instantFeedback)
-                                                {{ __('session.actions.check') }}
-                                            @else
-                                                {{ $next ? __('session.actions.save_next') : __('session.actions.finish') }}
-                                            @endif
-                                        </button>
-                                        @if (! $instantFeedback && $next)
-                                            <a href="{{ route('sessions.question', [$session, $next]) }}" class="text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200">{{ __('session.actions.skip') }}</a>
-                                        @endif
-                                    </div>
-                                @endif
                             </form>
                         @endif
                     </div>
@@ -250,8 +212,8 @@
                         @endif
                     </div>
                     {{-- Formularz musi istnieć zawsze — na ostatnim pytaniu korzysta z niego
-                         główny przycisk (form="finish-form"). Osobny, dyskretny przycisk
-                         pokazujemy tylko WCZEŚNIEJ, gdy chcesz przerwać sesję przed końcem. --}}
+                         przycisk „Zakończ" w prawej kolumnie (form="finish-form"). Dyskretny
+                         przycisk tutaj pokazujemy tylko WCZEŚNIEJ, gdy chcesz przerwać sesję. --}}
                     <form method="POST" action="{{ route('sessions.complete', $session) }}" id="finish-form">
                         @csrf
                         @if ($next)
@@ -264,9 +226,12 @@
                 </div>
             </div>
 
-            {{-- Nawigator pytań --}}
-            <aside class="lg:col-span-1">
-                <div class="card p-4">
+            {{-- Prawa kolumna: tablica pytań (u góry) + akcje (pod nią). Na mobile akcje
+                 wskakują TUŻ pod pytanie (order-1), a tablica na koniec — nauka zostaje
+                 „pod kciukiem". Na desktopie tablica u góry, akcje pod nią (jak w zleceniu). --}}
+            <aside class="flex flex-col gap-4 lg:col-span-1">
+                {{-- Nawigator pytań --}}
+                <div class="card order-2 p-4 lg:order-1">
                     <div class="mb-3 flex items-center justify-between">
                         <span class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">{{ __('session.navigator.title') }}</span>
                         <span class="text-xs text-slate-400 tnum">{{ $answeredCount }}/{{ $total }}</span>
@@ -276,18 +241,69 @@
                             @php
                                 $answered = $item->answered_at !== null;
                                 $isCurrent = $item->position === $position;
+                                if ($isCurrent) {
+                                    $navClass = 'bg-brand-600 text-white';
+                                } elseif (! $answered) {
+                                    $navClass = 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700';
+                                } elseif ($session->mode->isDiagnosis()) {
+                                    // Diagnoza nie zdradza poprawności — neutralny błękit, żeby zieleń nie
+                                    // sugerowała „wszystko dobrze". Wynik pada dopiero na ekranie diagnozy.
+                                    $navClass = 'bg-sky-100 text-sky-700 dark:bg-sky-500/15 dark:text-sky-300';
+                                } elseif ($item->is_correct) {
+                                    $navClass = 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300';
+                                } else {
+                                    $navClass = 'bg-rose-100 text-rose-700 dark:bg-rose-500/15 dark:text-rose-300';
+                                }
                             @endphp
                             <a href="{{ route('sessions.question', [$session, $item->position]) }}"
-                               class="flex h-8 items-center justify-center rounded-lg text-xs font-semibold tnum transition
-                                   {{ $isCurrent
-                                       ? 'bg-brand-600 text-white'
-                                       : ($answered
-                                           ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-500/15 dark:text-emerald-300'
-                                           : 'bg-slate-100 text-slate-500 hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-400 dark:hover:bg-slate-700') }}">
+                               class="flex h-8 items-center justify-center rounded-lg text-xs font-semibold tnum transition {{ $navClass }}">
                                 {{ $item->position }}
                             </a>
                         @endforeach
                     </div>
+                </div>
+
+                {{-- Akcje: wiem / strzelam (nauka) · zapisz i dalej / pomiń (diagnoza) · dalej (po odpowiedzi) --}}
+                <div class="card order-1 p-4 lg:order-2">
+                    @if ($showFeedback)
+                        @if ($next)
+                            <a href="{{ route('sessions.question', [$session, $next]) }}" class="btn btn-brand w-full">{{ __('session.feedback.next') }}</a>
+                        @else
+                            <button type="submit" form="finish-form" class="btn btn-brand w-full">{{ __('session.actions.finish') }}</button>
+                        @endif
+                    @elseif ($collectsConfidence)
+                        {{-- Ocena pewności ZAMIAST zwykłego „Sprawdź". Dwa przyciski to nadal jeden
+                             tap, a silnik dostaje sygnał, którego z samej poprawności nie odtworzy:
+                             czy wiedziałeś, czy trafiłeś. --}}
+                        <p class="text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                            {{ __('session.confidence.prompt') }}
+                        </p>
+                        <div class="mt-2.5 space-y-2">
+                            <button type="submit" form="answer-form" name="confidence" value="{{ Confidence::Sure->value }}"
+                                    :disabled="selected === null"
+                                    class="btn btn-brand w-full disabled:cursor-not-allowed disabled:opacity-40">
+                                {{ __('enums.confidence.sure') }}
+                            </button>
+                            <button type="submit" form="answer-form" name="confidence" value="{{ Confidence::Guess->value }}"
+                                    :disabled="selected === null"
+                                    class="btn btn-outline w-full disabled:cursor-not-allowed disabled:opacity-40">
+                                {{ __('enums.confidence.guess') }}
+                            </button>
+                        </div>
+                        <p class="mt-2.5 text-xs text-slate-400 dark:text-slate-500">
+                            {{ __('session.confidence.hint') }}
+                        </p>
+                    @else
+                        {{-- Diagnoza: bez feedbacku, ostatnie pytanie kończy sesję. --}}
+                        <button type="submit" form="answer-form" :disabled="selected === null"
+                                class="btn btn-brand w-full disabled:cursor-not-allowed disabled:opacity-40">
+                            {{ $next ? __('session.actions.save_next') : __('session.actions.finish') }}
+                        </button>
+                        @if ($next)
+                            <a href="{{ route('sessions.question', [$session, $next]) }}"
+                               class="mt-2.5 block text-center text-sm font-medium text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-200">{{ __('session.actions.skip') }}</a>
+                        @endif
+                    @endif
                 </div>
             </aside>
         </div>
