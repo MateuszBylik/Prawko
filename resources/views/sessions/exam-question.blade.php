@@ -206,9 +206,9 @@
                             @csrf
                             <input type="hidden" name="time_spent_ms" x-ref="spent" value="0">
 
-                            {{-- TAK/NIE węższe (25% szer.) i wyjustowane do krawędzi (TAK z lewej,
-                                 NIE z prawej) — tak jak było, tylko węziej. --}}
-                            <div class="{{ $isSpecialist ? 'space-y-2' : 'flex items-center justify-between gap-3' }}">
+                            {{-- TAK/NIE węższe (25% szer.), równe odstępy: krawędź–TAK–NIE–krawędź
+                                 (justify-evenly, bez gap, żeby środek nie był szerszy niż brzegi). --}}
+                            <div class="{{ $isSpecialist ? 'space-y-2' : 'flex items-center justify-evenly' }}">
                                 @foreach ($question->answers as $a)
                                     @if ($isSpecialist)
                                         <label class="flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-2.5 transition"
