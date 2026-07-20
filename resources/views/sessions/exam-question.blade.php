@@ -3,7 +3,8 @@
     $videoUrl = $question->videoUrl();
     $imageUrl = $question->imageUrl();
     $hasVideo = ! $isSpecialist && $videoUrl;
-    $hasImage = ! $isSpecialist && ! $hasVideo && $imageUrl;
+    // Zdjęcie: podstawowe BEZ filmu ORAZ specjalistyczne (774 z nich ma foto). Materiał jest 16:9 (1024×576).
+    $hasImage = ! $hasVideo && $imageUrl;
     $hasMedia = $hasVideo || $hasImage;
     // Model czasu jak na egzaminie WORD (pytania podstawowe): najpierw czas na
     // zapoznanie się z pytaniem, potem — po odtworzeniu materiału — czas na odpowiedź.
@@ -158,14 +159,15 @@
             <div class="lg:col-span-2">
                 <div class="card overflow-hidden">
 
-                    {{-- Materiał wypełnia CAŁĄ szerokość (bez czarnych pasów po bokach).
-                         Film jest 16:9 (aspect-video). Zdjęcia w naturalnych proporcjach.
-                         Gdy pytanie nie ma mediów — przekreślony aparat w ramce 16:9. --}}
+                    {{-- Materiał ZAWSZE w ramce 16:9 (film i zdjęcia są 1024×576), wypełnia
+                         całą szerokość bez czarnych pasów; brak mediów — przekreślony aparat. --}}
                     @if ($hasVideo)
                         <div class="relative aspect-video w-full bg-slate-900">
                             <button type="button" x-show="!mediaShown" x-on:click="start()"
-                                    class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center text-slate-300 transition hover:bg-slate-800">
-                                <svg class="h-12 w-12" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 7.5V6.75A2.25 2.25 0 0 0 18.75 4.5H5.25A2.25 2.25 0 0 0 3 6.75v10.5A2.25 2.25 0 0 0 5.25 19.5h13.5A2.25 2.25 0 0 0 21 17.25V16.5m-10.5-6 5 3-5 3v-6Z"/></svg>
+                                    class="group absolute inset-0 flex flex-col items-center justify-center gap-3 text-center text-slate-200 transition hover:bg-black/20">
+                                <span class="grid h-16 w-16 place-items-center rounded-full bg-white/15 ring-1 ring-white/30 backdrop-blur-sm transition group-hover:bg-white/25">
+                                    <svg class="h-7 w-7 translate-x-[2px]" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5.14v13.72a.6.6 0 0 0 .92.5l10.5-6.86a.6.6 0 0 0 0-1l-10.5-6.86a.6.6 0 0 0-.92.5Z"/></svg>
+                                </span>
                                 <span class="text-sm font-medium">{{ __('session.exam.show_video') }}</span>
                             </button>
                             <video x-show="mediaShown" x-cloak x-ref="film"
@@ -176,14 +178,16 @@
                             </video>
                         </div>
                     @elseif ($hasImage)
-                        <button type="button" x-show="!mediaShown" x-on:click="start()"
-                                class="flex aspect-[4/3] w-full flex-col items-center justify-center gap-2 bg-slate-100 text-center text-slate-400 transition hover:bg-slate-200 dark:bg-slate-800 dark:text-slate-500 dark:hover:bg-slate-700">
-                            <svg class="h-12 w-12" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 3.75h16.5v16.5H3.75z"/></svg>
-                            <span class="text-sm font-medium">{{ __('session.exam.show_image') }}</span>
-                        </button>
-                        <img x-show="mediaShown" x-cloak src="{{ $imageUrl }}" alt="" loading="eager"
-                             onerror="this.style.display='none';"
-                             class="block w-full">
+                        <div class="relative aspect-video w-full bg-slate-100 dark:bg-slate-800">
+                            <button type="button" x-show="!mediaShown" x-on:click="start()"
+                                    class="absolute inset-0 flex flex-col items-center justify-center gap-2 text-center text-slate-400 transition hover:bg-slate-200 dark:text-slate-500 dark:hover:bg-slate-700">
+                                <svg class="h-12 w-12" fill="none" stroke="currentColor" stroke-width="1.4" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="m2.25 15.75 5.159-5.159a2.25 2.25 0 0 1 3.182 0l5.159 5.159m-1.5-1.5 1.409-1.409a2.25 2.25 0 0 1 3.182 0l2.909 2.909M3.75 3.75h16.5v16.5H3.75z"/></svg>
+                                <span class="text-sm font-medium">{{ __('session.exam.show_image') }}</span>
+                            </button>
+                            <img x-show="mediaShown" x-cloak src="{{ $imageUrl }}" alt="" loading="eager"
+                                 onerror="this.style.display='none';"
+                                 class="absolute inset-0 h-full w-full object-cover">
+                        </div>
                     @else
                         {{-- Brak mediów: przekreślony aparat w ramce 16:9. --}}
                         <div class="flex aspect-video w-full items-center justify-center bg-slate-100 text-slate-300 dark:bg-slate-800 dark:text-slate-600">
@@ -192,14 +196,9 @@
                     @endif
 
                     <div class="p-4 sm:p-5">
-                        {{-- Typ pytania + pozycja --}}
-                        <div class="flex items-center gap-2">
-                            <span class="badge {{ $isSpecialist ? 'badge-amber' : 'badge-brand' }}">{{ $question->type->label() }}</span>
-                            <span class="text-xs text-slate-400 tnum">{{ $position }} / {{ $total }}</span>
-                        </div>
-
-                        {{-- Treść pytania --}}
-                        <p class="mt-2.5 text-base font-medium leading-snug text-slate-900 dark:text-white sm:text-lg">{{ $question->localizedText() }}</p>
+                        {{-- Pod materiałem WYŁĄCZNIE pytanie i odpowiedzi (jak na WORD) —
+                             typ i numer pytania nie są tu pokazywane. --}}
+                        <p class="text-base font-medium leading-snug text-slate-900 dark:text-white sm:text-lg">{{ $question->localizedText() }}</p>
 
                         {{-- Odpowiedzi — widoczne OD RAZU. Zaznaczenie nie przechodzi dalej;
                              robi to „Następne pytanie" albo koniec czasu (auto-wybór zaznaczonej). --}}
@@ -220,7 +219,7 @@
                                             <span class="flex-1 text-sm text-slate-800 dark:text-slate-100">{{ $question->localizedAnswerText($a) }}</span>
                                         </label>
                                     @else
-                                        <label class="flex cursor-pointer items-center justify-center rounded-xl border px-4 py-3.5 text-center text-lg font-bold transition"
+                                        <label class="flex cursor-pointer items-center justify-center rounded-lg border px-3 py-2 text-center text-sm font-semibold transition"
                                                :class="selected === {{ $a->id }}
                                                    ? 'border-brand-600 bg-brand-600 text-white ring-2 ring-brand-300 dark:ring-brand-500/40'
                                                    : 'border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100 dark:border-brand-500/30 dark:bg-brand-500/10 dark:text-brand-200 dark:hover:bg-brand-500/20'">

@@ -6,6 +6,21 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.3.1] — 2026-07-21
+
+### Naprawione
+- Egzamin: pytania **specjalistyczne** ze zdjęciem znów je pokazują (774 pytań
+  miało foto, a widok je blokował warunkiem „nie pokazuj mediów specjalistycznych").
+- Materiał na egzaminie jest w jednej ramce **16:9** (zdjęcia i filmy są 1024×576):
+  zdjęcie wypełnia całą szerokość i nie kurczy się po kliknięciu „Pokaż zdjęcie";
+  ramka „bez zdjęcia" również 16:9.
+- Pod materiałem pokazujemy już **wyłącznie pytanie i odpowiedzi** — bez plakietki
+  typu (Podstawowe/Specjalistyczne) i bez numeru pytania „x / 32".
+- Ikona odtwarzania na filmie ma teraz wyśrodkowany trójkąt (osadzony w kółku).
+
+### Zmienione
+- Przyciski TAK/NIE na egzaminie są mniejsze — bliżej realnej wielkości w WORD.
+
 ## [1.3.0] — 2026-07-20
 
 ### Dodane
@@ -83,6 +98,7 @@ Pierwsze oznaczone wydanie. Aplikacja działa produkcyjnie od 2026-07-16.
 - Wielojęzyczność: PL (źródło), EN, DE, UK.
 - Panel administratora użytkowników.
 
+[1.3.1]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.3.1
 [1.3.0]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.3.0
 [1.2.1]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.2.1
 [1.2.0]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.2.0
