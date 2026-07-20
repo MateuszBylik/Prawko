@@ -206,8 +206,9 @@
                             @csrf
                             <input type="hidden" name="time_spent_ms" x-ref="spent" value="0">
 
-                            {{-- TAK/NIE węższe (grid-cols-4 → każdy 25% szerokości, jak w WORD). --}}
-                            <div class="{{ $isSpecialist ? 'space-y-2' : 'grid grid-cols-4 gap-3' }}">
+                            {{-- TAK/NIE węższe (25% szer.) i wyjustowane do krawędzi (TAK z lewej,
+                                 NIE z prawej) — tak jak było, tylko węziej. --}}
+                            <div class="{{ $isSpecialist ? 'space-y-2' : 'flex items-center justify-between gap-3' }}">
                                 @foreach ($question->answers as $a)
                                     @if ($isSpecialist)
                                         <label class="flex cursor-pointer items-start gap-3 rounded-xl border px-4 py-2.5 transition"
@@ -220,7 +221,7 @@
                                             <span class="flex-1 text-sm text-slate-800 dark:text-slate-100">{{ $question->localizedAnswerText($a) }}</span>
                                         </label>
                                     @else
-                                        <label class="flex cursor-pointer items-center justify-center rounded-lg border px-3 py-2 text-center text-sm font-semibold transition"
+                                        <label class="flex w-1/4 shrink-0 cursor-pointer items-center justify-center rounded-lg border px-3 py-2 text-center text-sm font-semibold transition"
                                                :class="selected === {{ $a->id }}
                                                    ? 'border-brand-600 bg-brand-600 text-white ring-2 ring-brand-300 dark:ring-brand-500/40'
                                                    : 'border-brand-200 bg-brand-50 text-brand-700 hover:bg-brand-100 dark:border-brand-500/30 dark:bg-brand-500/10 dark:text-brand-200 dark:hover:bg-brand-500/20'">

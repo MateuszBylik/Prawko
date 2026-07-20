@@ -1,6 +1,6 @@
 # Prawko
 
-![Wersja](https://img.shields.io/badge/wersja-1.3.2-1f4bdc)
+![Wersja](https://img.shields.io/badge/wersja-1.3.3-1f4bdc)
 ![Laravel](https://img.shields.io/badge/Laravel-13-ff2d20)
 ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777bb4)
 ![PWA](https://img.shields.io/badge/PWA-tak-5a0fc8)
