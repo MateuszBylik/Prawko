@@ -6,10 +6,16 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.2.1] — 2026-07-20
+
+### Naprawione
+- Poprawiona nazwa instytucji egzaminacyjnej w dokumentacji i komentarzach:
+  błędny skrót „PORD" → „WORD" (Wojewódzki Ośrodek Ruchu Drogowego).
+
 ## [1.2.0] — 2026-07-20
 
 ### Zmienione
-- Tryb egzaminu odwzorowany 1:1 z ekranem PORD: układ dwukolumnowy, górny pasek z
+- Tryb egzaminu odwzorowany 1:1 z ekranem WORD: układ dwukolumnowy, górny pasek z
   czasem całego egzaminu (25 min), wartością punktową i kategorią, czerwony
   „Zakończ egzamin" w rogu, liczniki pytań podstawowych i specjalistycznych oraz
   pasek czasu na odpowiedź; przyciski na wysokości pytania i odpowiedzi.
@@ -48,7 +54,7 @@ Pierwsze oznaczone wydanie. Aplikacja działa produkcyjnie od 2026-07-16.
 ### Nauka
 - Diagnoza wstępna (40 pytań) wyznaczająca poziom i pierwszy plan.
 - Codzienne ćwiczenia (powtórki + domieszka nowych) oraz tryb „tylko nowe".
-- Egzamin próbny 1:1 z PORD (32 pytania, limit czasu, próg zdania).
+- Egzamin próbny 1:1 z WORD (32 pytania, limit czasu, próg zdania).
 - Pary mylące i pułapki egzaminacyjne, plan nauki pod datę egzaminu.
 - Wyjaśnienia błędów generowane AI (Claude) z zapisem w bazie.
 
@@ -61,6 +67,7 @@ Pierwsze oznaczone wydanie. Aplikacja działa produkcyjnie od 2026-07-16.
 - Wielojęzyczność: PL (źródło), EN, DE, UK.
 - Panel administratora użytkowników.
 
+[1.2.1]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.2.1
 [1.2.0]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.2.0
 [1.1.0]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.1.0
 [1.0.0]: https://github.com/MateuszBylik/Prawko/releases/tag/v1.0.0

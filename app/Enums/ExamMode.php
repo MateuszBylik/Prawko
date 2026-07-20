@@ -29,7 +29,7 @@ enum ExamMode: string
     /**
      * Czy w tym trybie pytamy o deklarowaną pewność („wiem" / „strzelam").
      *
-     * Tylko nauka. Egzamin próbny musi zostać 1:1 z arkuszem PORD — na prawdziwym
+     * Tylko nauka. Egzamin próbny musi zostać 1:1 z arkuszem WORD — na prawdziwym
      * egzaminie nikt nie pyta o pewność. Diagnoza to kalibrowany instrument pomiaru
      * θ (EAP z całego wzorca odpowiedzi) i nie zmieniamy jej przebiegu.
      */

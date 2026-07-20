@@ -11,7 +11,7 @@ use Illuminate\Support\Facades\Schema;
  * samo jak realne przypomnienie.
  *
  * Nullable, bo: (1) historyczne odpowiedzi jej nie mają, (2) egzamin próbny musi
- * zostać 1:1 z arkuszem PORD, a diagnoza to kalibrowany instrument pomiaru θ —
+ * zostać 1:1 z arkuszem WORD, a diagnoza to kalibrowany instrument pomiaru θ —
  * w obu pewności nie pytamy.
  */
 return new class extends Migration

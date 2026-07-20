@@ -134,7 +134,7 @@ class LossBreakdownTest extends TestCase
             $this->assertLessThanOrEqual($layer['pool_points'], $layer['loss']);
         }
 
-        $this->assertSame(74, $breakdown->maxScore, 'Arkusz PORD to 74 pkt.');
+        $this->assertSame(74, $breakdown->maxScore, 'Arkusz WORD to 74 pkt.');
         $this->assertSame(68, $breakdown->threshold);
     }
 

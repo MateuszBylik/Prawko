@@ -1,6 +1,6 @@
 # Prawko
 
-![Wersja](https://img.shields.io/badge/wersja-1.2.0-1f4bdc)
+![Wersja](https://img.shields.io/badge/wersja-1.2.1-1f4bdc)
 ![Laravel](https://img.shields.io/badge/Laravel-13-ff2d20)
 ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777bb4)
 ![PWA](https://img.shields.io/badge/PWA-tak-5a0fc8)
@@ -38,7 +38,7 @@ egzaminu**. Pełne założenia produktu opisuje [`cel.md`](cel.md).
   ustawia pierwszy plan.
 - **Codzienne ćwiczenia** — powtórki FSRS z domieszką nowych pytań, dawka pod datę
   egzaminu; osobny tryb **„tylko nowe"** do nadrabiania pokrycia puli.
-- **Egzamin próbny 1:1 z PORD** — 32 pytania (20 podstawowych + 12
+- **Egzamin próbny 1:1 z WORD** — 32 pytania (20 podstawowych + 12
   specjalistycznych), limit 25 min, fazy czytanie → film → odpowiedź, próg 68/74.
 - **Prognoza szansy zdania** w czasie (wykres) + ekran **„gdzie tracisz punkty"**
   rozbijający prognozę na warstwy strat.

@@ -78,7 +78,7 @@ class ConfidenceTest extends TestCase
     }
 
     /**
-     * Egzamin próbny ma zostać 1:1 z arkuszem PORD — nie pytamy tam o pewność.
+     * Egzamin próbny ma zostać 1:1 z arkuszem WORD — nie pytamy tam o pewność.
      * Test celowo DOSYŁA pole, którego formularz nie wysyła: gdyby kontroler je
      * przyjął, tryb egzaminu przestałby być wierną symulacją tylnymi drzwiami.
      */

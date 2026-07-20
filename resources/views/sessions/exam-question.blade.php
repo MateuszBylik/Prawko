@@ -5,7 +5,7 @@
     $hasVideo = ! $isSpecialist && $videoUrl;
     $hasImage = ! $isSpecialist && ! $hasVideo && $imageUrl;
     $hasMedia = $hasVideo || $hasImage;
-    // Model czasu jak na egzaminie PORD (pytania podstawowe): najpierw czas na
+    // Model czasu jak na egzaminie WORD (pytania podstawowe): najpierw czas na
     // zapoznanie się z pytaniem, potem — po odtworzeniu materiału — czas na odpowiedź.
     // Odpowiedzi i przyciski są widoczne od razu; liczniki tylko wyznaczają rytm.
     $readSeconds = (int) config('prawko.timing.basic_read_seconds');   // 20 s

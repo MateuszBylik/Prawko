@@ -144,7 +144,7 @@ class ExamSessionController extends Controller
             ->with(['question.answers', 'question.categories'])
             ->firstOrFail();
 
-        // Liczniki jak na egzaminie PORD: osobno podstawowe i specjalistyczne.
+        // Liczniki jak na egzaminie WORD: osobno podstawowe i specjalistyczne.
         $byType = $session->answers()
             ->with('question:id,type')
             ->get(['id', 'question_id', 'answered_at'])
@@ -195,7 +195,7 @@ class ExamSessionController extends Controller
         }
 
         // Pewność bierzemy pod uwagę tylko tam, gdzie o nią pytamy (nauka). Gdyby
-        // ktoś dosłał `confidence` w egzaminie, i tak ją tu odcinamy — arkusz PORD
+        // ktoś dosłał `confidence` w egzaminie, i tak ją tu odcinamy — arkusz WORD
         // ma zostać nietknięty, a diagnoza mierzy θ przy niezmienionym przebiegu.
         $confidence = $session->mode->collectsConfidence() ? $request->confidence() : null;
 
