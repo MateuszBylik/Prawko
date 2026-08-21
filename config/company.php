@@ -14,8 +14,8 @@
 return [
     'name' => 'ZałapTo',
     'legal_name' => 'ZałapTo Mateusz Bylica',
-    'street' => 'al. 700-lecia Torunia 16/64',
-    'city' => '87-100 Toruń',
+    'street' => 'ul. Heroldów 10B/53',
+    'city' => '01-991 Warszawa',
     'nip' => '7011290100',
     'regon' => '543455540',
     'duns' => '369370289',

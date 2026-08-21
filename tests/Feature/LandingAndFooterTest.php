@@ -23,8 +23,8 @@ class LandingAndFooterTest extends TestCase
 
         foreach ([
             'ZałapTo Mateusz Bylica',
-            'al. 700-lecia Torunia 16/64',
-            '87-100 Toruń',
+            'ul. Heroldów 10B/53',
+            '01-991 Warszawa',
             '7011290100',   // NIP
             '543455540',    // REGON
             'kontakt@zalapto.pl',

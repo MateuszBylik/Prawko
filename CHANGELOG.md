@@ -6,6 +6,13 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.3.5] — 2026-08-21
+
+### Zmienione
+- Adres firmy w stopce i danych rejestrowych zmieniony na ul. Heroldów 10B/53,
+  01-991 Warszawa (poprzednio al. 700-lecia Torunia 16/64, 87-100 Toruń).
+  Zaktualizowany też test pilnujący danych rejestrowych w stopce.
+
 ## [1.3.4] — 2026-07-21
 
 ### Zmienione
