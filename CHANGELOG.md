@@ -6,6 +6,15 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.3.6] — 2026-09-30
+
+### Bezpieczeństwo
+- Usunięte `trustProxies(at: ['*'])`: aplikacja nie ufa już nagłówkom proxy
+  (`X-Forwarded-For` i podobnym) od nikogo, więc nie da się podrobić IP klienta.
+  Prawdziwy adres ustawia teraz nginx (`real_ip` z `CF-Connecting-IP`, tylko od
+  adresów Cloudflare), a wejścia z pominięciem Cloudflare są blokowane.
+  HTTPS (także adresy assetów Vite) wynika z `fastcgi_params` — sprawdzone, bez `http://`.
+
 ## [1.3.5] — 2026-08-21
 
 ### Zmienione

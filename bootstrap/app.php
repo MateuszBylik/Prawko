@@ -18,9 +18,9 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware): void {
-        // Za Cloudflare + nginx (HTTPS): poprawne wykrywanie schematu i IP klienta,
-        // dzięki czemu generowane adresy (m.in. assety Vite) są po HTTPS.
-        $middleware->trustProxies(at: ['*']);
+        // Bez zaufanych proxy: prawdziwe IP klienta ustawia nginx (real_ip z CF-Connecting-IP, tylko
+        // od adresów Cloudflare - /etc/nginx/conf.d/cloudflare.conf), a HTTPS (także adresy assetów
+        // Vite) wynika z fastcgi_params. Dawne trustProxies('*') pozwalało podrobić IP nagłówkiem.
 
         $middleware->alias([
             'admin' => EnsureUserIsAdmin::class,
