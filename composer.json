@@ -1,9 +1,9 @@
 {
     "$schema": "https://getcomposer.org/schema.json",
-    "name": "laravel/laravel",
+    "name": "mateuszbylik/prawko",
     "type": "project",
-    "description": "The skeleton application for the Laravel framework.",
-    "keywords": ["laravel", "framework"],
+    "description": "Study app for the Polish driving licence theory exam, with an adaptive engine that estimates the chance of passing (FSRS-5, Rasch/IRT, Monte Carlo).",
+    "keywords": ["driving-licence", "theory-exam", "spaced-repetition", "fsrs", "irt", "laravel"],
     "license": "proprietary",
     "require": {
         "php": "^8.3",

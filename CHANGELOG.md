@@ -6,6 +6,13 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.3.9] — 2026-10-30
+
+### Zmienione
+- `composer.json`: nazwa, opis i słowa kluczowe Prawka zamiast pozostałości szkieletu
+  Laravela (`laravel/laravel` → `mateuszbylik/prawko`). W `composer.lock` zmienia się
+  tylko suma kontrolna — pakiety bez zmian.
+
 ## [1.3.8] — 2026-10-30
 
 ### Zmienione
