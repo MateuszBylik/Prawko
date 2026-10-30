@@ -6,6 +6,17 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.3.7] — 2026-10-30
+
+### Bezpieczeństwo
+- Aktualizacja zależności Composera z łatkami bezpieczeństwa, w ramach dotychczasowych
+  wersji głównych: Laravel 13.19 → 13.39, Symfony 8.1.10, Guzzle 7.16.1,
+  league/commonmark 2.10.4, PhpSpreadsheet 5.10.0 (+ zależności). `composer audit`:
+  28 zgłoszeń w 7 pakietach → 0. Guzzle zostaje na 7.x, a brick/math na 0.18
+  (`composer update --with`) — skok wersji głównej to osobne zadanie.
+- Testy: 193/193 przed i po aktualizacji; strony gościa, kursanta i admina dają
+  te same odpowiedzi co przed aktualizacją.
+
 ## [1.3.6] — 2026-09-30
 
 ### Bezpieczeństwo
