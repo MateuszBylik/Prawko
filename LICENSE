@@ -1,0 +1,37 @@
+Proprietary Licence
+
+Copyright (c) 2026 Mateusz Bylica. All rights reserved.
+
+This repository, including its source code, documentation and all other files
+(the "Software"), is the exclusive property of Mateusz Bylica (the "Author").
+
+The Software is made publicly available solely so that it can be viewed and
+evaluated, for example as part of the Author's portfolio. You are granted no
+licence other than the right to view the Software and, to the extent required
+by the GitHub Terms of Service, to fork it within GitHub.
+
+Without the Author's prior written permission you may not:
+
+  1. use, run or deploy the Software, in whole or in part, for any purpose;
+  2. copy, reproduce, modify, translate or create derivative works of the
+     Software;
+  3. distribute, publish, sublicense, sell, lease or otherwise make the Software
+     available to third parties;
+  4. use the Software, or any part of it, to provide a product or service,
+     whether commercial or not.
+
+Third-party components used by the Software (such as the Laravel framework and
+the other packages listed in composer.json and package.json) are licensed by
+their respective owners under their own licences, which this licence does not
+change. Data obtained from public sources (such as the official exam question
+bank) remains subject to its original terms.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
+FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT. IN NO EVENT SHALL THE AUTHOR BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF
+CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+To request permission, contact the Author via GitHub:
+https://github.com/MateuszBylik

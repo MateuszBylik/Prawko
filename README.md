@@ -1,100 +1,101 @@
 # Prawko
 
-![Wersja](https://img.shields.io/badge/wersja-1.3.7-1f4bdc)
+![Version](https://img.shields.io/badge/version-1.3.8-1f4bdc)
 ![Laravel](https://img.shields.io/badge/Laravel-13-ff2d20)
 ![PHP](https://img.shields.io/badge/PHP-8.3%2B-777bb4)
-![PWA](https://img.shields.io/badge/PWA-tak-5a0fc8)
-![Licencja](https://img.shields.io/badge/licencja-zastrze%C5%BCona-lightgrey)
+![PWA](https://img.shields.io/badge/PWA-yes-5a0fc8)
 
-Aplikacja do nauki na **egzamin teoretyczny prawa jazdy**. Zamiast pokazywać
-surowe „ile procent zrobiłeś", liczy realną **szansę zdania** i prowadzi kursanta
-najkrótszą drogą do niej — powtórkami w odpowiednim momencie i pytaniami, na
-których naprawdę traci punkty.
+A study app for the Polish **driving licence theory exam**. Instead of showing a raw
+"percentage completed", it estimates the learner's real **chance of passing** and
+guides them along the shortest path to it — with reviews at the right moment and
+the questions on which they actually lose points.
 
-Działa produkcyjnie pod [prawojazdy.zalapto.pl](https://prawojazdy.zalapto.pl).
+Running in production at [prawojazdy.zalapto.pl](https://prawojazdy.zalapto.pl).
 
 ---
 
-## Filozofia: niewidoczny silnik
+## Philosophy: an invisible engine
 
-Kursant widzi prosty pulpit i jeden wskaźnik — **szansę zdania**. Pod spodem
-pracują trzy modele, których użytkownik nigdy nie musi rozumieć:
+The learner sees a simple dashboard and a single indicator — the **chance of
+passing**. Underneath, three models are at work that the user never needs to
+understand:
 
-| Model | Rola |
+| Model | Role |
 | --- | --- |
-| **FSRS-5** | pamięć: kiedy powtórzyć każde pytanie (stabilność + trudność) |
-| **Rasch / IRT** | umiejętność kursanta (θ) i trudność pytań (b); `p = σ(θ − b)` |
-| **Monte Carlo** | tysiące symulacji arkusza egzaminacyjnego → rozkład wyniku i szansa zdania |
+| **FSRS-5** | memory: when to review each question (stability + difficulty) |
+| **Rasch / IRT** | learner ability (θ) and question difficulty (b); `p = σ(θ − b)` |
+| **Monte Carlo** | thousands of simulated exam sheets → score distribution and chance of passing |
 
-Na tej podstawie aplikacja układa **kolejkę ryzyka** (pytania szeregowane wg
-oczekiwanej straty punktów: udział na arkuszu × waga × `1 − p`) i **plan pod datę
-egzaminu**. Pełne założenia produktu opisuje [`cel.md`](cel.md).
-
----
-
-## Funkcje
-
-- **Diagnoza** (40 pytań, bez presji czasu) — jednym przebiegiem szacuje θ (EAP) i
-  ustawia pierwszy plan.
-- **Codzienne ćwiczenia** — powtórki FSRS z domieszką nowych pytań, dawka pod datę
-  egzaminu; osobny tryb **„tylko nowe"** do nadrabiania pokrycia puli.
-- **Egzamin próbny 1:1 z WORD** — 32 pytania (20 podstawowych + 12
-  specjalistycznych), limit 25 min, fazy czytanie → film → odpowiedź, próg 68/74.
-- **Prognoza szansy zdania** w czasie (wykres) + ekran **„gdzie tracisz punkty"**
-  rozbijający prognozę na warstwy strat.
-- **Pary mylące** i **pułapki** egzaminacyjne (negacja / kwantyfikator / obowiązek…).
-- **Wyjaśnienia błędów generowane AI** (Claude) — na żądanie, z zapisem w bazie.
-- **Prompt w dniu egzaminu** („jak poszło?") i **trofea** zdanych kategorii.
-- **PWA** (instalowalna, offline dla assetów), **tryb ciemny**, **i18n** PL/EN/DE/UK.
-- **Panel administratora** użytkowników.
+On this basis the app builds a **risk queue** (questions ranked by expected point
+loss: share of the exam sheet × weight × `1 − p`) and a **plan for the exam date**.
+The full product assumptions are described in [`cel.md`](cel.md) (in Polish).
 
 ---
 
-## Stack technologiczny
+## Features
+
+- **Diagnosis** (40 questions, no time pressure) — estimates θ (EAP) in a single pass
+  and sets up the first plan.
+- **Daily practice** — FSRS reviews mixed with new questions, dosed to the exam date;
+  a separate **"new only"** mode to catch up on coverage of the question pool.
+- **Mock exam, 1:1 with the official exam** (as taken at WORD, the regional exam
+  centres) — 32 questions (20 basic + 12 specialist), 25-minute limit,
+  read → video → answer phases, pass mark 68/74.
+- **Chance-of-passing forecast** over time (chart) + a **"where you lose points"**
+  screen that breaks the forecast down into layers of losses.
+- **Confusable pairs** and exam **traps** (negation / quantifier / obligation…).
+- **AI-generated explanations of mistakes** (Claude) — on demand, stored in the database.
+- **Exam-day prompt** ("how did it go?") and **trophies** for passed categories.
+- **PWA** (installable, assets available offline), **dark mode**, **i18n** PL/EN/DE/UK.
+- **Admin panel** for user management.
+
+---
+
+## Tech stack
 
 - **Backend:** PHP 8.3+ · Laravel 13 · Laravel Breeze (auth) · Sanctum
-- **Baza:** MySQL / MariaDB (produkcja), SQLite in-memory (testy)
+- **Database:** MySQL / MariaDB (production), in-memory SQLite (tests)
 - **Frontend:** Blade · Tailwind CSS 3 · Alpine.js · Vite
-- **Import puli:** `phpoffice/phpspreadsheet` (XLSX oficjalnej bazy pytań)
-- **Media:** transkodowanie WMV → MP4 (H.264) do odtwarzania w przeglądarce
-- **AI:** Anthropic Claude (wyjaśnienia błędów, wykrywanie różnic w parach mylących)
-- **Bez Redis** — silnik i kolejki działają na sterowniku bazodanowym.
+- **Question import:** `phpoffice/phpspreadsheet` (XLSX of the official question bank)
+- **Media:** WMV → MP4 (H.264) transcoding for in-browser playback
+- **AI:** Anthropic Claude (explanations of mistakes, spotting the difference in confusable pairs)
+- **No Redis** — the engine and queues run on the database driver.
 
 ---
 
-## Wymagania
+## Requirements
 
-- PHP **8.3+** (produkcja: 8.4) z rozszerzeniami wymaganymi przez Laravela
+- PHP **8.3+** (production: 8.4) with the extensions required by Laravel
 - Composer 2
-- Node **20+** i npm
-- MySQL/MariaDB (lub SQLite do lokalnego rozwoju)
-- `ffmpeg` w `PATH` — tylko jeśli używasz `prawko:transcode-media`
+- Node **20+** and npm
+- MySQL/MariaDB (or SQLite for local development)
+- `ffmpeg` in `PATH` — only if you use `prawko:transcode-media`
 
 ---
 
-## Instalacja
+## Installation
 
 ```bash
-# 1. Zależności
+# 1. Dependencies
 composer install
 npm install
 
-# 2. Środowisko
+# 2. Environment
 cp .env.example .env
 php artisan key:generate
-#   ustaw DB_* oraz (opcjonalnie) ANTHROPIC_API_KEY dla wyjaśnień AI
+#   set DB_* and (optionally) ANTHROPIC_API_KEY for AI explanations
 
-# 3. Baza
+# 3. Database
 php artisan migrate
 
-# 4. Baza pytań (oficjalny arkusz XLSX)
+# 4. Question bank (official XLSX sheet)
 php artisan prawko:import-questions
 
-# 5. Assety
+# 5. Assets
 npm run build
 ```
 
-Szybki start środowiska deweloperskiego (serwer + kolejka + logi + Vite w jednym):
+Quick start for local development (server + queue + logs + Vite in one):
 
 ```bash
 composer dev
@@ -102,89 +103,83 @@ composer dev
 
 ---
 
-## Komendy `prawko:*`
+## `prawko:*` commands
 
-| Komenda | Opis |
+| Command | Description |
 | --- | --- |
-| `prawko:import-questions` | Importuje oficjalną bazę pytań z pliku XLSX do bazy danych. |
-| `prawko:transcode-media` | Konwertuje wideo pytań z WMV na MP4 (H.264) do odtwarzania w przeglądarce. |
-| `prawko:detect-twins` | Wykrywa pary mylące (podobne pytania) trigramami → `question_similars`. |
-| `prawko:tag-traps` | Taguje pytania typami pułapek (negacja / kwantyfikator / obowiązek / warunek / liczba). |
+| `prawko:import-questions` | Imports the official question bank from an XLSX file into the database. |
+| `prawko:transcode-media` | Converts question videos from WMV to MP4 (H.264) for in-browser playback. |
+| `prawko:detect-twins` | Detects confusable pairs (similar questions) using trigrams → `question_similars`. |
+| `prawko:tag-traps` | Tags questions with trap types (negation / quantifier / obligation / condition / number). |
 
 ---
 
-## Architektura silnika
+## Engine architecture
 
-Logika domenowa mieszka w `app/Services/` — cienkie kontrolery, gruby silnik:
+Domain logic lives in `app/Services/` — thin controllers, fat engine:
 
-- **FsrsService**, **SpacedRepetitionService** — FSRS-5, terminy powtórek.
-- **AbilityService**, **PCorrectService** — Rasch/IRT (θ, b) i `p(correct)`.
-- **CalibrationService** — kalibracja deklaracji „wiem/strzelam".
-- **ExamForecastService**, **ForecastHistoryService** — Monte Carlo + migawki wykresu.
-- **RiskQueueService**, **LossBreakdownService** — kolejka ryzyka i rozbicie strat.
-- **StudyPlanService** — dawka i plan pod datę egzaminu.
-- **ExamService** — orkiestracja sesji (start / odpowiedź / domknięcie / wynik).
+- **FsrsService**, **SpacedRepetitionService** — FSRS-5, review scheduling.
+- **AbilityService**, **PCorrectService** — Rasch/IRT (θ, b) and `p(correct)`.
+- **CalibrationService** — calibration of "I know / I'm guessing" declarations.
+- **ExamForecastService**, **ForecastHistoryService** — Monte Carlo + chart snapshots.
+- **RiskQueueService**, **LossBreakdownService** — risk queue and loss breakdown.
+- **StudyPlanService** — daily dose and plan for the exam date.
+- **ExamService** — session orchestration (start / answer / close / result).
 - **ExplanationService**, **TrapTagger**, **WalletService**, **KnowledgeService**,
-  **EngineCache** — wyjaśnienia AI, pułapki, portfel kredytów, cache silnika.
+  **EngineCache** — AI explanations, traps, credit wallet, engine cache.
 
-Parametry egzaminu, diagnozy, FSRS i modelu czasowego trzymamy w
-[`config/prawko.php`](config/prawko.php) (nie w kodzie), więc reguły stroi się bez
-zmian w logice.
+Exam, diagnosis, FSRS and timing-model parameters live in
+[`config/prawko.php`](config/prawko.php) (not in code), so the rules can be tuned
+without changing the logic.
 
-**Tryby sesji** (`App\Enums\ExamMode`):
+**Session modes** (`App\Enums\ExamMode`):
 
-| Tryb | Widok | Feedback | Limit czasu |
+| Mode | View | Feedback | Time limit |
 | --- | --- | --- | --- |
-| `practice` (nauka) | `sessions/question` | natychmiast, + „wiem/strzelam" | miękki, per pytanie |
-| `exam` (egzamin) | `sessions/exam-question` | dopiero wynik | 25 min, twardy |
-| `diagnosis` (diagnoza) | `sessions/question` | dopiero wynik (szacuje θ) | brak |
+| `practice` | `sessions/question` | immediate, + "I know / I'm guessing" | soft, per question |
+| `exam` | `sessions/exam-question` | only in the result | 25 min, hard |
+| `diagnosis` | `sessions/question` | only in the result (estimates θ) | none |
 
 ---
 
-## Testy
+## Tests
 
 ```bash
-php artisan test          # (composer test robi wcześniej config:clear)
+php artisan test          # (composer test runs config:clear first)
 ```
 
-> ⚠️ **Ważne:** na produkcji konfiguracja jest zcache'owana (`config:cache`), co
-> przesłania `phpunit.xml` i skierowałoby testy na **produkcyjną** bazę, którą
-> `RefreshDatabase` by wyczyściło. Dlatego **zawsze** `php artisan config:clear`
-> przed testami (skrypt `composer test` robi to za Ciebie; jest też bezpiecznik w
-> `tests/TestCase.php`).
+> ⚠️ **Important:** in production the configuration is cached (`config:cache`),
+> which overrides `phpunit.xml` and would point the tests at the **production**
+> database — which `RefreshDatabase` would then wipe. So **always** run
+> `php artisan config:clear` before testing (the `composer test` script does it for
+> you; there is also a safeguard in `tests/TestCase.php`).
 
 ---
 
-## Wdrożenie (produkcja)
+## Deployment (production)
 
-- Zbuduj cache po każdej zmianie konfiguracji / tras / widoków:
+- Rebuild the caches after every change to config / routes / views:
   ```bash
   php artisan config:cache && php artisan route:cache && php artisan view:cache
   npm run build
   ```
-- Artisan na serwerze uruchamiaj jako **`www-data`** (ownership logów i cache).
-- Kolejka na sterowniku bazodanowym — po deployu `php artisan queue:restart`.
-- `MAIL_MAILER=log` (poczta trafia do logu, nie wychodzi na zewnątrz).
+- Run Artisan on the server as **`www-data`** (ownership of logs and cache).
+- The queue runs on the database driver — run `php artisan queue:restart` after each deploy.
+- `MAIL_MAILER=log` (mail goes to the log and is never sent out).
 
 ---
 
-## Wersjonowanie
+## Versioning
 
-Wersja jest stałą w [`config/app.php`](config/app.php) (`app.version`), pokazywaną
-w stopce, a historia zmian mieszka w [`CHANGELOG.md`](CHANGELOG.md) (SemVer). Przy
-wydaniu podbij `app.version`, dopisz wpis do CHANGELOG i przebuduj cache.
-
----
-
-## Internacjonalizacja
-
-Źródłem prawdy jest **polski** (`lang/pl`); `lang/{en,de,uk}` to tłumaczenia.
-Parzystość kluczy pilnuje test pokrycia tłumaczeń. Treść pytań ma warianty
-językowe (polski zawsze pierwszy na liście tłumaczeń).
+The version is a constant in [`config/app.php`](config/app.php) (`app.version`),
+shown in the footer; the change history lives in [`CHANGELOG.md`](CHANGELOG.md)
+(SemVer, in Polish). For a release, bump `app.version`, add a CHANGELOG entry and
+rebuild the caches.
 
 ---
 
-## Licencja
+## Internationalisation
 
-Kod aplikacji jest własnością **ZałapTo (Mateusz Bylica)** — wszelkie prawa
-zastrzeżone. Framework Laravel jest dostępny na licencji MIT.
+The source of truth is **Polish** (`lang/pl`); `lang/{en,de,uk}` are translations.
+A translation-coverage test enforces key parity. Question content has language
+variants (Polish always comes first in the list of translations).

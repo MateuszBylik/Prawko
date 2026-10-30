@@ -6,6 +6,15 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.3.8] — 2026-10-30
+
+### Zmienione
+- README po angielsku (repozytorium jest publiczne jako projekt pokazowy), bez
+  plakietki i sekcji o licencji.
+- Licencja przeniesiona do pliku `LICENSE` (po angielsku): własnościowa, prawa
+  autorskie Mateusza Bylicy (wcześniej README wskazywało ZałapTo). W `composer.json`
+  pole `license` zmienione z `MIT` (pozostałość szkieletu Laravela) na `proprietary`.
+
 ## [1.3.7] — 2026-10-30
 
 ### Bezpieczeństwo
