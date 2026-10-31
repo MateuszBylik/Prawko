@@ -6,6 +6,15 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.4.1] — 2026-10-31
+
+### Bezpieczeństwo
+- `.gitignore`: wszystkie warianty `.env.*` (poza `.env.example`), klucze
+  i certyfikaty (`*.pem`, `*.key`, `*.p12`, `*.pfx`…), pliki poświadczeń,
+  zrzuty baz (`*.sql`, `*.dump`, `*.sqlite`) oraz `storage/app/import/`.
+- `.env.example`: ustawienia zgodne z aplikacją, pusty `ANTHROPIC_API_KEY`,
+  wyłącznie placeholdery. Audyt sekretów całej historii repozytorium: czysto.
+
 ## [1.4.0] — 2026-10-31
 
 ### Zmienione

@@ -1,9 +1,6 @@
 *.log
 .DS_Store
 .env
-.env.backup
-.env.backup*
-.env.production
 .phpactor.json
 .phpunit.result.cache
 /.codex
@@ -26,3 +23,24 @@ _ide_helper.php
 Homestead.json
 Homestead.yaml
 Thumbs.db
+
+# Credentials and data that must never be committed
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+*.pfx
+*.jks
+*.keystore
+id_rsa*
+id_ed25519*
+credentials*.json
+service-account*.json
+*.sql
+*.sql.gz
+*.dump
+*.sqlite
+*.sqlite3
+# Official question bank and media (imported locally, not redistributed)
+/storage/app/import/
