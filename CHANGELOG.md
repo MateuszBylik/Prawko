@@ -6,6 +6,13 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.4.0] — 2026-10-31
+
+### Zmienione
+- Licencja: Mozilla Public License 2.0 zamiast licencji własnościowej z 1.3.8.
+  `LICENSE` zawiera pełny, oryginalny tekst MPL 2.0 (mozilla.org) poprzedzony
+  linią „Copyright (c) 2026 Mateusz Bylica”. `composer.json`: `license` → `MPL-2.0`.
+
 ## [1.3.9] — 2026-10-30
 
 ### Zmienione
