@@ -6,6 +6,13 @@ Format oparty na [Keep a Changelog](https://keepachangelog.com/pl/1.1.0/),
 wersjonowanie wg [SemVer](https://semver.org/lang/pl/).
 Wersja jest trzymana w `config/app.php` (`app.version`) i pokazywana w stopce.
 
+## [1.4.3] — 2026-10-31
+
+### Dodane
+- `ROADMAP.md`: plan dalszych prac (ok. 97 h) — symulator skrzyżowań, testy,
+  dokumentacja importu, narzędzia admina do wyjaśnień i tagowania, PWA / tryb
+  ciemny / tłumaczenia, optymalizacja silnika Monte Carlo.
+
 ## [1.4.2] — 2026-10-31
 
 ### Zmienione
