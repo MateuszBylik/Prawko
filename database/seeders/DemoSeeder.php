@@ -37,12 +37,12 @@ class DemoSeeder extends Seeder
         );
 
         $school = School::firstOrCreate(
-            ['slug' => 'szkola-jazdy-zalapto'],
+            ['slug' => 'szkola-jazdy-przyklad'],
             [
-                'name' => 'Szkoła Jazdy ZałapTo',
+                'name' => 'Szkoła Jazdy Przykład',
                 'city' => 'Warszawa',
                 'nip' => '5252525252',
-                'email' => 'kontakt@zalapto.pl',
+                'email' => 'kontakt@szkola-przyklad.test',
                 'owner_id' => $instructor->id,
             ],
         );
